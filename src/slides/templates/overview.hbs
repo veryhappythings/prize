@@ -2,6 +2,21 @@
   <h2>Overview</h2>
   <p class="summary">{{slide.summary}}</p>
 
+  <div class="stats-row">
+    <div class="stat">
+      <span class="stat-num">{{slide.totalFiles}}</span>
+      <span class="stat-label">files changed</span>
+    </div>
+    <div class="stat stat-add">
+      <span class="stat-num">+{{slide.additions}}</span>
+      <span class="stat-label">additions</span>
+    </div>
+    <div class="stat stat-del">
+      <span class="stat-num">-{{slide.deletions}}</span>
+      <span class="stat-label">deletions</span>
+    </div>
+  </div>
+
   <div class="overview-grid">
     <div class="overview-block">
       <h4>Motivation</h4>

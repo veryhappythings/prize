@@ -21,7 +21,7 @@ export function buildSlideDeck(prData: PRData, analysis: AllAnalysis): SlideDeck
         month: 'long',
         day: 'numeric',
       }),
-      jiraTicket: overview.jiraTicket,
+      jiraTicket: overview.jiraTicket === 'null' ? null : overview.jiraTicket,
     },
     sub: [],
   })
@@ -35,6 +35,9 @@ export function buildSlideDeck(prData: PRData, analysis: AllAnalysis): SlideDeck
       c4Context: overview.c4Context,
       affectedAreas: overview.affectedAreas,
       risks: overview.risks,
+      totalFiles: metadata.changedFiles,
+      additions: metadata.additions,
+      deletions: metadata.deletions,
     },
     sub: [],
   })

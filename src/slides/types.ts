@@ -27,6 +27,9 @@ export interface OverviewSlide {
   c4Context: string
   affectedAreas: string[]
   risks: string[]
+  totalFiles: number
+  additions: number
+  deletions: number
 }
 
 export interface MapSlide {
