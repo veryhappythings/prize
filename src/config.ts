@@ -38,6 +38,6 @@ export function loadConfig(): Config {
     llmApiKey,
     llmBaseUrl,
     llmModel,
-    cacheDir: join(homedir(), '.review-monster'),
+    cacheDir: join(homedir(), '.pr-deck'),
   }
 }

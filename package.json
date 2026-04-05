@@ -1,10 +1,10 @@
 {
-  "name": "review-monster",
+  "name": "pr-deck",
   "version": "0.1.0",
   "description": "Augment and structure human PR reviews with LLM analysis",
   "type": "module",
   "bin": {
-    "review-monster": "./dist/cli.js"
+    "pr-deck": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsup && cp -r src/llm/prompts dist/prompts && mkdir -p dist/slides && cp -r src/slides/templates dist/slides/templates",

@@ -35,7 +35,7 @@ export LLM_MODEL=anthropic/claude-sonnet-4          # optional
 
 ## Architecture
 
-The tool is a pipeline: **fetch → analyze → generate → serve**. Each step's output is cached in `~/.review-monster/<owner>-<repo>-<pr_number>/` and skipped on re-runs if the PR `updated_at` hasn't changed.
+The tool is a pipeline: **fetch → analyze → generate → serve**. Each step's output is cached in `~/.pr-deck/<owner>-<repo>-<pr_number>/` and skipped on re-runs if the PR `updated_at` hasn't changed.
 
 ### Pipeline flow (`src/pipeline/index.ts`)
 
