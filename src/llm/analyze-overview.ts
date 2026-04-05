@@ -32,8 +32,8 @@ export async function analyzeOverview(
     {
       type: 'object',
       properties: {
-        summary: { type: 'string', description: 'One paragraph summary of what this PR does' },
-        motivation: { type: 'string', description: 'Why this change is being made' },
+        summary: { type: 'string', description: 'One or two sentence summary of what this PR does' },
+        motivation: { type: 'string', description: 'Why this change is being made — one sentence' },
         risks: {
           type: 'array',
           items: { type: 'string' },
