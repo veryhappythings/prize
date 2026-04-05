@@ -1,0 +1,128 @@
+/* Review Monster — custom reveal.js styles */
+
+:root {
+  --rm-accent: #7c6af7;
+  --rm-green: #4caf82;
+  --rm-red: #e05c5c;
+  --rm-yellow: #f0c040;
+  --rm-muted: #888;
+}
+
+.reveal h1 { font-size: 1.8em; }
+.reveal h2 { font-size: 1.4em; color: var(--rm-accent); }
+.reveal h3 { font-size: 1.1em; color: var(--rm-accent); margin-bottom: 0.4em; }
+.reveal h4 { font-size: 0.85em; color: var(--rm-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3em; }
+
+/* Title slide */
+.slide-title .rm-badge {
+  display: inline-block;
+  background: var(--rm-accent);
+  color: white;
+  font-size: 0.55em;
+  padding: 0.2em 0.7em;
+  border-radius: 999px;
+  margin-bottom: 0.8em;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.slide-title .subtitle { color: var(--rm-muted); font-size: 0.75em; margin-top: 0.5em; }
+.slide-title .jira-ticket {
+  display: inline-block;
+  background: #2a2a4a;
+  border: 1px solid var(--rm-accent);
+  color: var(--rm-accent);
+  font-size: 0.65em;
+  padding: 0.2em 0.8em;
+  border-radius: 4px;
+  font-family: monospace;
+  margin-top: 0.4em;
+}
+.slide-title .pr-url { font-size: 0.5em; color: var(--rm-muted); margin-top: 0.6em; }
+.slide-title .pr-url a { color: var(--rm-muted); }
+
+/* Overview */
+.slide-overview .summary { font-size: 0.8em; margin-bottom: 1em; }
+.overview-grid { display: flex; gap: 1.5em; margin-bottom: 0.8em; }
+.overview-block { flex: 1; font-size: 0.65em; }
+.tags { margin-bottom: 0.6em; }
+.tag {
+  display: inline-block;
+  background: #2a2a4a;
+  color: var(--rm-accent);
+  font-size: 0.55em;
+  padding: 0.2em 0.6em;
+  border-radius: 3px;
+  margin: 0.15em;
+}
+.risks ul { font-size: 0.65em; margin: 0; }
+
+/* Map */
+.slide-map .piece-map { font-size: 0.7em; text-align: left; }
+.slide-map .piece-map li { margin-bottom: 0.5em; }
+.piece-desc { color: var(--rm-muted); font-weight: normal; }
+
+/* Piece summary */
+.slide-piece-summary .piece-counter {
+  font-size: 0.5em;
+  color: var(--rm-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.3em;
+}
+.piece-description { font-size: 0.75em; margin-bottom: 0.8em; }
+.file-list { font-size: 0.55em; font-family: monospace; list-style: none; padding: 0; color: var(--rm-muted); }
+.file-list li::before { content: '📄 '; }
+
+/* Signatures */
+.signatures-table { font-size: 0.55em; width: 100%; border-collapse: collapse; }
+.signatures-table th { color: var(--rm-muted); font-weight: normal; text-align: left; padding: 0.3em 0.5em; border-bottom: 1px solid #333; }
+.signatures-table td { padding: 0.4em 0.5em; border-bottom: 1px solid #222; vertical-align: top; }
+.signatures-table .file-path { color: var(--rm-muted); font-family: monospace; }
+
+/* Walkthrough */
+.walkthrough-text { font-size: 0.75em; line-height: 1.7; text-align: left; max-width: 800px; margin: 0 auto; }
+
+/* Code */
+.slide-code .filename { font-size: 0.55em; font-family: monospace; color: var(--rm-muted); margin-bottom: 0.5em; }
+.reveal pre { font-size: 0.45em; max-height: 65vh; overflow-y: auto; }
+.status { font-size: 0.85em; padding: 0.1em 0.4em; border-radius: 3px; margin-left: 0.5em; }
+.status-added { background: #1a3a1a; color: var(--rm-green); }
+.status-modified { background: #2a2a1a; color: var(--rm-yellow); }
+.status-removed { background: #3a1a1a; color: var(--rm-red); }
+.status-renamed { background: #1a2a3a; color: #60a0d0; }
+
+/* Diff syntax */
+.reveal pre code.diff .hljs-addition { color: var(--rm-green); }
+.reveal pre code.diff .hljs-deletion { color: var(--rm-red); }
+
+/* Issues */
+.issues-list { list-style: none; padding: 0; font-size: 0.65em; }
+.issue { display: flex; gap: 0.7em; align-items: flex-start; padding: 0.5em; border-left: 3px solid transparent; margin-bottom: 0.4em; }
+.issue-high { border-color: var(--rm-red); background: #2a1a1a; }
+.issue-medium { border-color: var(--rm-yellow); background: #2a2a1a; }
+.issue-low { border-color: #555; background: #1a1a1a; }
+.severity-badge {
+  font-size: 0.75em;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.issue-high .severity-badge { background: var(--rm-red); color: white; }
+.issue-medium .severity-badge { background: var(--rm-yellow); color: #111; }
+.issue-low .severity-badge { background: #555; color: #ccc; }
+
+/* Summary */
+.stats-row { display: flex; gap: 2em; justify-content: center; margin: 1.2em 0; }
+.stat { text-align: center; }
+.stat-num { display: block; font-size: 2em; font-weight: bold; }
+.stat-add .stat-num { color: var(--rm-green); }
+.stat-del .stat-num { color: var(--rm-red); }
+.stat-label { font-size: 0.6em; color: var(--rm-muted); }
+.final-risks ul { font-size: 0.65em; text-align: left; }
+.summary-text { font-size: 0.7em; color: var(--rm-muted); }
+
+/* Navigation hint */
+.hint { font-size: 0.45em; color: #555; margin-top: 1em; }

@@ -1,0 +1,11 @@
+<section class="slide-issues">
+  <h3>{{slide.pieceName}} — Issues</h3>
+  <ul class="issues-list">
+    {{#each slide.issues}}
+    <li class="issue issue-{{severity}}">
+      <span class="severity-badge">{{severity}}</span>
+      {{description}}
+    </li>
+    {{/each}}
+  </ul>
+</section>

@@ -1,0 +1,11 @@
+<section class="slide-piece-summary">
+  <div class="piece-counter">{{slide.pieceIndex}} / {{slide.totalPieces}}</div>
+  <h2>{{slide.name}}</h2>
+  <p class="piece-description">{{slide.description}}</p>
+  <ul class="file-list">
+    {{#each slide.files}}<li>{{this}}</li>{{/each}}
+  </ul>
+  {{#if slide.sub.length}}
+  <p class="hint">Press ↓ to explore this piece in depth</p>
+  {{/if}}
+</section>

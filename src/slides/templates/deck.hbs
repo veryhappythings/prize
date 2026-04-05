@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{prTitle}} — Review Monster</title>
+  <link rel="stylesheet" href="reveal/reset.css">
+  <link rel="stylesheet" href="reveal/reveal.css">
+  <link rel="stylesheet" href="reveal/theme/black.css">
+  <link rel="stylesheet" href="reveal/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      {{#each groups}}
+      <section>
+        {{> (slide_partial main.type) slide=main}}
+        {{#each sub}}
+        <section>{{> (slide_partial type) slide=this}}</section>
+        {{/each}}
+      </section>
+      {{/each}}
+    </div>
+  </div>
+
+  <script src="reveal/reveal.js"></script>
+  <script src="reveal/plugin/highlight/highlight.js"></script>
+  <script src="reveal/plugin/notes/notes.js"></script>
+  <script src="mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+
+    Reveal.initialize({
+      hash: true,
+      transition: 'slide',
+      transitionSpeed: 'fast',
+      controls: true,
+      progress: true,
+      plugins: [RevealHighlight, RevealNotes],
+    });
+
+    Reveal.on('slidechanged', async () => {
+      const diagrams = document.querySelectorAll('.mermaid:not([data-processed])');
+      for (const el of diagrams) {
+        const code = el.textContent || '';
+        const id = 'mermaid-' + Math.random().toString(36).slice(2);
+        const { svg } = await mermaid.render(id, code);
+        el.innerHTML = svg;
+        el.setAttribute('data-processed', 'true');
+      }
+    });
+  </script>
+</body>
+</html>

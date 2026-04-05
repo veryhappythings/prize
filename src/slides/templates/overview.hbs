@@ -1,0 +1,28 @@
+<section class="slide-overview">
+  <h2>Overview</h2>
+  <p class="summary">{{slide.summary}}</p>
+
+  <div class="overview-grid">
+    <div class="overview-block">
+      <h4>Motivation</h4>
+      <p>{{slide.motivation}}</p>
+    </div>
+    <div class="overview-block">
+      <h4>C4 Context</h4>
+      <p>{{slide.c4Context}}</p>
+    </div>
+  </div>
+
+  {{#if slide.affectedAreas.length}}
+  <div class="tags">
+    {{#each slide.affectedAreas}}<span class="tag">{{this}}</span>{{/each}}
+  </div>
+  {{/if}}
+
+  {{#if slide.risks.length}}
+  <div class="risks">
+    <h4>Risks</h4>
+    <ul>{{#each slide.risks}}<li>{{this}}</li>{{/each}}</ul>
+  </div>
+  {{/if}}
+</section>

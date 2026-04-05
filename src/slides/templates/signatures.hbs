@@ -1,0 +1,15 @@
+<section class="slide-signatures">
+  <h3>{{slide.pieceName}} — Key Signatures</h3>
+  <table class="signatures-table">
+    <thead><tr><th>Name</th><th>File</th><th>What it does</th></tr></thead>
+    <tbody>
+      {{#each slide.signatures}}
+      <tr>
+        <td><code>{{name}}</code></td>
+        <td class="file-path">{{file}}</td>
+        <td>{{explanation}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</section>
