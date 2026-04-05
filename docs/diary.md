@@ -67,3 +67,33 @@ The tool previously required an Anthropic API key. Added support for any OpenAI-
 ### Test results
 - 11 unit tests passing
 - TypeScript build: clean (27.63 KB bundle)
+
+## 2026-04-05 — Amazon Bedrock provider
+
+Added `LLM_PROVIDER=bedrock` support via the Bedrock Converse API.
+
+### What changed
+
+- `src/llm/providers/bedrock.ts` — new `BedrockLLMClient` using `@aws-sdk/client-bedrock-runtime`
+- `src/llm/factory.ts` — added `bedrock` case
+- `src/config.ts` — added `'bedrock'` to provider union, `awsRegion` field, skips API key check for Bedrock
+- `package.json` — added `@aws-sdk/client-bedrock-runtime` dependency
+- `CLAUDE.md` — documented Bedrock env vars
+
+### Design notes
+
+Uses the Converse API (`ConverseCommand`) which has native tool use. Forced tool choice via `toolConfig.toolChoice: { tool: { name } }`. Response is already-parsed JSON (same as Anthropic SDK), so no manual `JSON.parse` needed.
+
+Authentication uses the standard AWS credential chain — `AWS_ACCESS_KEY_ID`/`AWS_SECRET_ACCESS_KEY`, IAM role, AWS SSO, etc. No `LLM_API_KEY` required.
+
+### Env vars
+
+| Var | Default | Notes |
+|-----|---------|-------|
+| `LLM_PROVIDER` | `anthropic` | Set to `bedrock` |
+| `AWS_REGION` | `us-east-1` | Bedrock region |
+| `LLM_MODEL` | `us.anthropic.claude-sonnet-4-6-v1:0` | Any Bedrock model ID |
+
+### Test results
+- 11 unit tests passing
+- TypeScript build: clean (29.36 KB bundle)

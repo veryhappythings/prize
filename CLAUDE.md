@@ -26,6 +26,13 @@ export LLM_PROVIDER=openai
 export LLM_API_KEY=...
 export LLM_BASE_URL=https://openrouter.ai/api/v1   # optional
 export LLM_MODEL=anthropic/claude-sonnet-4          # optional
+
+# Or to use Amazon Bedrock (uses AWS credential chain — no LLM_API_KEY needed):
+export LLM_PROVIDER=bedrock
+export AWS_REGION=us-east-1                                        # optional, default us-east-1
+export AWS_ACCESS_KEY_ID=...                                       # or use IAM role / AWS SSO
+export AWS_SECRET_ACCESS_KEY=...
+export LLM_MODEL=us.anthropic.claude-sonnet-4-6-v1:0              # optional
 ```
 
 ## Conventions
