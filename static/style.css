@@ -41,10 +41,11 @@
 .slide-title .pr-url a { color: var(--rm-muted); }
 
 /* Overview */
-.slide-overview .summary { font-size: 0.8em; margin-bottom: 1em; }
-.overview-grid { display: flex; gap: 1.5em; margin-bottom: 0.8em; }
-.overview-block { flex: 1; font-size: 0.65em; }
-.tags { margin-bottom: 0.6em; }
+.slide-overview h2 { margin-bottom: 0.2em; }
+.slide-overview .summary { font-size: 0.65em; margin-bottom: 0.3em; }
+.overview-grid { display: flex; gap: 1.5em; margin-bottom: 0.3em; }
+.overview-block { flex: 1; font-size: 0.48em; }
+.tags { margin-bottom: 0; }
 .tag {
   display: inline-block;
   background: #2a2a4a;
@@ -57,9 +58,16 @@
 .risks ul { font-size: 0.65em; margin: 0; }
 
 /* Map */
-.slide-map .piece-map { font-size: 0.7em; text-align: left; }
-.slide-map .piece-map li { margin-bottom: 0.5em; }
-.piece-desc { color: var(--rm-muted); font-weight: normal; }
+.slide-map .piece-map { font-size: 0.6em; text-align: left; }
+.slide-map .piece-map li { margin-bottom: 0.4em; }
+.piece-desc {
+  color: var(--rm-muted);
+  font-weight: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 /* Piece summary */
 .slide-piece-summary .piece-counter {
@@ -84,7 +92,7 @@
 
 /* Code */
 .slide-code .filename { font-size: 0.55em; font-family: monospace; color: var(--rm-muted); margin-bottom: 0.5em; }
-.reveal pre { font-size: 0.45em; max-height: 65vh; overflow-y: auto; }
+.reveal pre { font-size: 0.45em; max-height: 420px; overflow-y: auto; }
 .status { font-size: 0.85em; padding: 0.1em 0.4em; border-radius: 3px; margin-left: 0.5em; }
 .status-added { background: #1a3a1a; color: var(--rm-green); }
 .status-modified { background: #2a2a1a; color: var(--rm-yellow); }
@@ -115,14 +123,20 @@
 .issue-low .severity-badge { background: #555; color: #ccc; }
 
 /* Summary */
-.stats-row { display: flex; gap: 2em; justify-content: center; margin: 1.2em 0; }
+.stats-row { display: flex; gap: 2em; justify-content: center; margin: 0.3em 0; }
 .stat { text-align: center; }
-.stat-num { display: block; font-size: 2em; font-weight: bold; }
+.stat-num { display: block; font-size: 1.3em; font-weight: bold; }
 .stat-add .stat-num { color: var(--rm-green); }
 .stat-del .stat-num { color: var(--rm-red); }
 .stat-label { font-size: 0.6em; color: var(--rm-muted); }
 .final-risks ul { font-size: 0.65em; text-align: left; }
 .summary-text { font-size: 0.7em; color: var(--rm-muted); }
+
+/* Overflow safety net — slides that exceed canvas height become scrollable */
+.reveal .slides section {
+  overflow-y: auto;
+  box-sizing: border-box;
+}
 
 /* Navigation hint */
 .hint { font-size: 0.45em; color: #555; margin-top: 1em; }
