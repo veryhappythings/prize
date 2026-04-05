@@ -7,7 +7,7 @@
     "review-monster": "./dist/cli.js"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && cp -r src/llm/prompts dist/prompts && mkdir -p dist/slides && cp -r src/slides/templates dist/slides/templates",
     "dev": "tsx src/cli.ts",
     "test": "vitest run",
     "test:watch": "vitest"

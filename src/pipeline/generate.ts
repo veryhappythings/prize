@@ -6,8 +6,24 @@ import type { SlideDeck } from '../slides/types.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
+/**
+ * Find the project root by walking up until we find package.json.
+ * Works in both dev mode (tsx src/...) and bundled mode (dist/cli.js).
+ */
+function findProjectRoot(): string {
+  let dir = __dirname
+  while (true) {
+    if (existsSync(join(dir, 'package.json'))) return dir
+    const parent = dirname(dir)
+    if (parent === dir) throw new Error('Could not find project root (no package.json found)')
+    dir = parent
+  }
+}
+
+const projectRoot = findProjectRoot()
+
 function loadTemplate(name: string): string {
-  return readFileSync(join(__dirname, '../slides/templates', `${name}.hbs`), 'utf-8')
+  return readFileSync(join(projectRoot, 'src/slides/templates', `${name}.hbs`), 'utf-8')
 }
 
 function registerPartials() {
@@ -46,7 +62,7 @@ export async function generateSite(deck: SlideDeck, outputDir: string): Promise<
   writeFileSync(indexPath, html, 'utf-8')
 
   // Copy static assets (reveal.js, mermaid, style.css)
-  const staticSrc = join(__dirname, '../../static')
+  const staticSrc = join(projectRoot, 'static')
   if (existsSync(staticSrc)) {
     cpSync(staticSrc, outputDir, { recursive: true })
   }
