@@ -19,8 +19,19 @@ yarn vitest run test/cache.test.ts
 Required env vars before running:
 ```sh
 export GITHUB_TOKEN=...
-export ANTHROPIC_API_KEY=...
+export ANTHROPIC_API_KEY=...   # default provider (anthropic)
+
+# Or to use any OpenAI-compatible API (OpenRouter, Ollama, Azure, etc.):
+export LLM_PROVIDER=openai
+export LLM_API_KEY=...
+export LLM_BASE_URL=https://openrouter.ai/api/v1   # optional
+export LLM_MODEL=anthropic/claude-sonnet-4          # optional
 ```
+
+## Conventions
+
+- Always save implementation plans into `docs/`
+- Always update `docs/diary.md` after completing work
 
 ## Architecture
 

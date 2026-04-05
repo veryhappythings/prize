@@ -1,11 +1,10 @@
-import type Anthropic from '@anthropic-ai/sdk'
-import { callWithTool } from './client.js'
+import type { LLMClient } from './interface.js'
 import { loadPrompt } from './load-prompt.js'
 import type { PRData } from '../github/types.js'
 import type { OverviewAnalysis } from './types.js'
 
 export async function analyzeOverview(
-  client: Anthropic,
+  client: LLMClient,
   prData: PRData
 ): Promise<OverviewAnalysis> {
   const fileList = prData.files
@@ -25,8 +24,7 @@ export async function analyzeOverview(
     fileList,
   })
 
-  return callWithTool<OverviewAnalysis>(
-    client,
+  return client.callWithTool<OverviewAnalysis>(
     'You are an expert software engineer doing code review preparation.',
     prompt,
     'submit_overview',

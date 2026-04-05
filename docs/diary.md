@@ -36,3 +36,34 @@ export GITHUB_TOKEN=...
 export ANTHROPIC_API_KEY=...
 yarn dev https://github.com/owner/repo/pull/123
 ```
+
+## 2026-04-05 — Configurable LLM provider
+
+Plan: `docs/plan-configurable-llm.md`
+
+The tool previously required an Anthropic API key. Added support for any OpenAI-compatible API so users aren't locked into a specific billing model.
+
+### What changed
+
+- `src/llm/interface.ts` — new `LLMClient` interface with `callWithTool<T>()`
+- `src/llm/providers/anthropic.ts` — `AnthropicLLMClient` (wraps existing SDK logic)
+- `src/llm/providers/openai.ts` — `OpenAILLMClient` (OpenAI-compatible, handles JSON arg parsing)
+- `src/llm/factory.ts` — `createLLMClient(config)` selects provider from env vars
+- `src/llm/client.ts` — deleted (logic moved to providers)
+- `src/config.ts` — replaced `anthropicApiKey` with `llmProvider`, `llmApiKey`, `llmBaseUrl`, `llmModel`
+- `src/pipeline/index.ts` — uses `createLLMClient` instead of `getAnthropicClient`
+- Three analysis modules — type signature change only (`Anthropic` → `LLMClient`)
+
+### Env vars
+
+| Var | Default | Notes |
+|-----|---------|-------|
+| `ANTHROPIC_API_KEY` | — | Still works as before (backward compat) |
+| `LLM_PROVIDER` | `anthropic` | `anthropic` or `openai` |
+| `LLM_API_KEY` | — | Overrides provider-specific key |
+| `LLM_BASE_URL` | Provider default | Custom endpoint (e.g. OpenRouter) |
+| `LLM_MODEL` | `claude-sonnet-4-6` | Model identifier |
+
+### Test results
+- 11 unit tests passing
+- TypeScript build: clean (27.63 KB bundle)

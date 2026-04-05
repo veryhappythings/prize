@@ -6,7 +6,7 @@ import { logger } from '../util/logger.js'
 import { Cache } from '../cache/index.js'
 import { getOctokit } from '../github/client.js'
 import { fetchPRData, fetchPRMetadata } from '../github/pr.js'
-import { getAnthropicClient } from '../llm/client.js'
+import { createLLMClient } from '../llm/factory.js'
 import { analyzeOverview } from '../llm/analyze-overview.js'
 import { analyzeStructure } from '../llm/analyze-structure.js'
 import { analyzeAllDetails } from '../llm/analyze-detail.js'
@@ -24,7 +24,7 @@ export interface RunOptions {
 
 export async function run(ref: PRRef, config: Config, opts: RunOptions = {}) {
   const octokit = getOctokit(config.githubToken)
-  const anthropic = getAnthropicClient(config.anthropicApiKey)
+  const llm = createLLMClient(config)
   const cacheKey = prCacheKey(ref)
   const cache = new Cache(config.cacheDir, cacheKey)
 
@@ -72,7 +72,7 @@ export async function run(ref: PRRef, config: Config, opts: RunOptions = {}) {
     overview = cache.get<OverviewAnalysis>('analysis-overview')!
   } else {
     logger.startSpinner('Analyzing PR overview...')
-    overview = await analyzeOverview(anthropic, prData)
+    overview = await analyzeOverview(llm, prData)
     cache.set('analysis-overview', overview)
     logger.stopSpinner('Overview analysis complete')
   }
@@ -84,7 +84,7 @@ export async function run(ref: PRRef, config: Config, opts: RunOptions = {}) {
     structure = cache.get<StructureAnalysis>('analysis-structure')!
   } else {
     logger.startSpinner('Decomposing PR into logical pieces...')
-    structure = await analyzeStructure(anthropic, overview, prData.diff)
+    structure = await analyzeStructure(llm, overview, prData.diff)
     cache.set('analysis-structure', structure)
     logger.stopSpinner(`Found ${structure.pieces.length} logical pieces`)
   }
@@ -97,7 +97,7 @@ export async function run(ref: PRRef, config: Config, opts: RunOptions = {}) {
   } else {
     logger.info(`Analyzing ${structure.pieces.length} pieces...`)
     let done = 0
-    details = await analyzeAllDetails(anthropic, structure.pieces, prData.files, (pieceId) => {
+    details = await analyzeAllDetails(llm, structure.pieces, prData.files, (pieceId) => {
       done++
       logger.info(`  [${done}/${structure.pieces.length}] Analyzed: ${pieceId}`)
     })

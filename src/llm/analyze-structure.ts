@@ -1,10 +1,9 @@
-import type Anthropic from '@anthropic-ai/sdk'
-import { callWithTool } from './client.js'
+import type { LLMClient } from './interface.js'
 import { loadPrompt } from './load-prompt.js'
 import type { OverviewAnalysis, StructureAnalysis } from './types.js'
 
 export async function analyzeStructure(
-  client: Anthropic,
+  client: LLMClient,
   overview: OverviewAnalysis,
   diff: string
 ): Promise<StructureAnalysis> {
@@ -23,8 +22,7 @@ export async function analyzeStructure(
     diff: truncatedDiff,
   })
 
-  return callWithTool<StructureAnalysis>(
-    client,
+  return client.callWithTool<StructureAnalysis>(
     'You are an expert software engineer doing code review preparation.',
     prompt,
     'submit_structure',

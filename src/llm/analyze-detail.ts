@@ -1,5 +1,4 @@
-import type Anthropic from '@anthropic-ai/sdk'
-import { callWithTool } from './client.js'
+import type { LLMClient } from './interface.js'
 import { loadPrompt } from './load-prompt.js'
 import type { PRFile } from '../github/types.js'
 import type { Piece, DetailAnalysis } from './types.js'
@@ -17,7 +16,7 @@ function extractPieceDiff(files: PRFile[], pieceFiles: string[]): string {
 }
 
 export async function analyzeDetail(
-  client: Anthropic,
+  client: LLMClient,
   piece: Piece,
   files: PRFile[]
 ): Promise<DetailAnalysis> {
@@ -34,8 +33,7 @@ export async function analyzeDetail(
     umlInstruction,
   })
 
-  const result = await callWithTool<Omit<DetailAnalysis, 'pieceId'>>(
-    client,
+  const result = await client.callWithTool<Omit<DetailAnalysis, 'pieceId'>>(
     'You are an expert software engineer doing code review preparation.',
     prompt,
     'submit_detail',
@@ -82,7 +80,7 @@ export async function analyzeDetail(
 }
 
 export async function analyzeAllDetails(
-  client: Anthropic,
+  client: LLMClient,
   pieces: Piece[],
   files: PRFile[],
   onProgress?: (pieceId: string) => void
