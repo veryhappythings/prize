@@ -10,8 +10,7 @@
     "build": "tsup && cp -r src/llm/prompts dist && mkdir -p dist/slides && cp -r src/slides/templates dist/slides/templates",
     "dev": "tsx src/cli.ts",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "prepare": "husky"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
@@ -25,7 +24,6 @@
   "devDependencies": {
     "@types/handlebars": "^4.1.0",
     "@types/node": "^22.0.0",
-    "husky": "^9.1.7",
     "tsup": "^8.4.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3",
