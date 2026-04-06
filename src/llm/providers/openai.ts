@@ -1,6 +1,12 @@
 import OpenAI from 'openai'
 import type { LLMClient } from '../interface.js'
 
+interface FunctionToolCall {
+  id: string
+  type: 'function'
+  function: { name: string; arguments: string }
+}
+
 const DEFAULT_MODEL = 'gpt-4o'
 
 export class OpenAILLMClient implements LLMClient {
@@ -40,7 +46,10 @@ export class OpenAILLMClient implements LLMClient {
     })
 
     const message = response.choices[0]?.message
-    const toolCall = message?.tool_calls?.find((tc) => tc.function.name === toolName)
+    const toolCall = message?.tool_calls?.find(
+      (tc): tc is FunctionToolCall =>
+        tc.type === 'function' && (tc as FunctionToolCall).function.name === toolName
+    )
     if (!toolCall) {
       throw new Error(`LLM did not call tool ${toolName}`)
     }

@@ -28,7 +28,8 @@ export class BedrockLLMClient implements LLMClient {
       toolSpec: {
         name: toolName,
         description: toolDescription,
-        inputSchema: { json: inputSchema },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        inputSchema: { json: inputSchema as any },
       },
     }
 
