@@ -55,7 +55,7 @@ export async function run(ref: PRRef, config: Config, opts: RunOptions = {}) {
         files: cache.get('pr-files')!,
         diff: cache.getText('pr-diff')!,
         comments: cache.get('pr-metadata')
-          ? (cache.get<PRData>('pr-metadata') as unknown as any)?.comments ?? []
+          ? (cache.get<PRData>('pr-metadata') as PRData)?.comments ?? []
           : [],
       }
     } else {

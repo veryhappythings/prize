@@ -1,7 +1,6 @@
 import { createServer } from 'node:http'
 import { createReadStream, statSync, existsSync } from 'node:fs'
 import { join, extname } from 'node:path'
-import { createRequire } from 'node:module'
 
 const MIME: Record<string, string> = {
   '.html': 'text/html',

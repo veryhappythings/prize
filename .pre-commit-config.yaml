@@ -12,6 +12,13 @@ repos:
 
   - repo: local
     hooks:
+      - id: lint
+        name: ESLint
+        language: system
+        entry: yarn lint
+        pass_filenames: false
+        types: [ts]
+
       - id: typecheck
         name: TypeScript type check
         language: system

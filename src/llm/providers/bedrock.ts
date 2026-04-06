@@ -2,7 +2,6 @@ import {
   BedrockRuntimeClient,
   ConverseCommand,
   type Tool,
-  type ToolResultBlock,
 } from '@aws-sdk/client-bedrock-runtime'
 import type { LLMClient } from '../interface.js'
 
