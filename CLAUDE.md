@@ -22,7 +22,8 @@ CLI flags accepted by `yarn dev`:
 ```sh
 yarn dev <pr-url> --force    # bypass cache, re-run full pipeline
 yarn dev <pr-url> --port 3000
-yarn dev <pr-url> --no-open  # skip auto-opening the browser
+yarn dev <pr-url> --no-server  # generate the site but do not serve it
+yarn dev <pr-url> --no-open    # serve but do not open the browser
 ```
 
 Required env vars before running:

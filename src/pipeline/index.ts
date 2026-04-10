@@ -19,6 +19,7 @@ import type { OverviewAnalysis, StructureAnalysis, DetailAnalysis, AllAnalysis }
 export interface RunOptions {
   force?: boolean
   port?: number
+  noServer?: boolean
   noOpen?: boolean
 }
 
@@ -117,8 +118,8 @@ export async function run(ref: PRRef, config: Config, opts: RunOptions = {}) {
   logger.stopSpinner(`Generated: ${indexPath}`)
 
   // ── Step 7: Serve + open browser ──────────────────────────────────────────
-  if (!opts.noOpen) {
-    await startServer(siteDir, opts.port ?? 3000)
+  if (!opts.noServer) {
+    await startServer(siteDir, opts.port ?? 3000, !opts.noOpen)
   } else {
     logger.success(`Site ready at: ${siteDir}`)
   }

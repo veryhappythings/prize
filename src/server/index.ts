@@ -26,7 +26,7 @@ function findAvailablePort(startPort: number): Promise<number> {
   })
 }
 
-export async function startServer(siteDir: string, preferredPort = 3000): Promise<void> {
+export async function startServer(siteDir: string, preferredPort = 3000, openBrowser = true): Promise<void> {
   const port = await findAvailablePort(preferredPort)
 
   const server = createServer((req, res) => {
@@ -50,11 +50,13 @@ export async function startServer(siteDir: string, preferredPort = 3000): Promis
   })
 
   const url = `http://localhost:${port}`
-  try {
-    const { default: open } = await import('open')
-    await open(url)
-  } catch {
-    console.log(`Open your browser at: ${url}`)
+  if (openBrowser) {
+    try {
+      const { default: open } = await import('open')
+      await open(url)
+    } catch {
+      console.log(`Open your browser at: ${url}`)
+    }
   }
 
   // Keep alive

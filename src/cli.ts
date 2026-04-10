@@ -13,8 +13,9 @@ program
   .argument('<pr-url>', 'GitHub PR URL (e.g. https://github.com/owner/repo/pull/123)')
   .option('-f, --force', 'bypass cache and re-analyze from scratch', false)
   .option('-p, --port <number>', 'port for the local server', '3000')
-  .option('--no-open', 'generate the site but do not open the browser')
-  .action(async (prUrl: string, options: { force: boolean; port: string; open: boolean }) => {
+  .option('--no-server', 'generate the site but do not serve it')
+  .option('--no-open', 'serve the site but do not open the browser')
+  .action(async (prUrl: string, options: { force: boolean; port: string; server: boolean; open: boolean }) => {
     try {
       const config = loadConfig()
       const ref = parsePRUrl(prUrl)
@@ -22,6 +23,7 @@ program
       await run(ref, config, {
         force: options.force,
         port: parseInt(options.port, 10),
+        noServer: !options.server,
         noOpen: !options.open,
       })
     } catch (err) {

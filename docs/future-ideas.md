@@ -1,6 +1,5 @@
 # Future Feature Ideas
 
-- Figure out --no-open flag - currently this doesn't start the server, we want to cope with just generating slides, running the server, and opening the browser.
 - links out to all changed files
 - Other linters/static analysis tools?
 - Useful C4 diagram
