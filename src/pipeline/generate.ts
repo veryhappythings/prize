@@ -62,6 +62,20 @@ function registerHelpers() {
       .replace(/`([^`]+)`/g, '<code>$1</code>')
     return new Handlebars.SafeString(html)
   })
+
+  // Returns true if the slide type is 'map' (used to skip map group in rendering)
+  Handlebars.registerHelper('is_map', (type: string) => type === 'map')
+
+  // Extracts a human-readable sidebar label from a main slide
+  Handlebars.registerHelper('section_label', (slide: Record<string, unknown>) => {
+    switch (slide.type) {
+      case 'title': return slide.prTitle as string
+      case 'overview': return 'Overview'
+      case 'piece-summary': return slide.name as string
+      case 'summary': return 'Summary'
+      default: return String(slide.type)
+    }
+  })
 }
 
 export async function generateSite(deck: SlideDeck, outputDir: string): Promise<string> {

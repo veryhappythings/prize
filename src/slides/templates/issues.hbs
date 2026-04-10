@@ -1,11 +1,11 @@
-<section class="slide-issues">
+<div class="slide-issues">
   <h3>{{slide.pieceName}} — Issues</h3>
   <ul class="issues-list">
     {{#each slide.issues}}
     <li class="issue issue-{{severity}}">
       <span class="severity-badge">{{severity}}</span>
-      {{{md description}}}
+      <div class="issue-body">{{{md description}}}</div>
     </li>
     {{/each}}
   </ul>
-</section>
+</div>

@@ -2,7 +2,7 @@
 
 ## 2026-04-05 — Phase 1: Scaffolding
 
-Starting from zero. Repo has only `docs/spec.md`. 
+Starting from zero. Repo has only `docs/spec.md`.
 
 Plan written to `docs/plan.md`. Stack: TypeScript, yarn, commander, @octokit/rest, @anthropic-ai/sdk, handlebars, reveal.js (vendored), tsup, vitest.
 
@@ -97,3 +97,46 @@ Authentication uses the standard AWS credential chain — `AWS_ACCESS_KEY_ID`/`A
 ### Test results
 - 11 unit tests passing
 - TypeScript build: clean (29.36 KB bundle)
+
+## 2026-04-10 — Sidebar + detail page layout (farewell reveal.js)
+
+Replaced the reveal.js slideshow with a GitHub PR review-style layout: fixed sidebar on the left, scrollable detail pane on the right.
+
+### Motivation
+
+The slideshow model required users to navigate horizontally through pieces and vertically through depth, which felt like clicking through a presentation. A scrollable page with a persistent navigation sidebar is more natural for code review — you can skim, jump around, and read at your own pace.
+
+### What changed
+
+**New layout (`src/slides/templates/deck.hbs` — full rewrite)**
+- Two-column body: `.sidebar` (260px fixed) + `.detail-pane` (flex: 1, scrollable)
+- Sidebar lists all sections (title, overview, pieces in review order, summary); map slide is silently skipped since the sidebar replaces it
+- Scroll-spy via `IntersectionObserver` highlights the active section in the sidebar
+- Smooth scroll on sidebar link click
+- Mermaid diagrams rendered on `DOMContentLoaded` (previously lazy-rendered on slide change)
+- Standalone `highlight.min.js` (11.9.0) vendored to `static/` — the reveal plugin bundle exposed `RevealHighlight`, not `hljs`
+
+**Templates (`src/slides/templates/*.hbs`)**
+- All 10 partials: outer `<section>` → `<div>` (reveal.js needed sections, plain HTML doesn't)
+- Removed the "Press ↓ to explore" navigation hint from `piece-summary.hbs`
+- Added `<div class="issue-body">` wrapper in `issues.hbs` so flex layout correctly constrains text reflow
+
+**New Handlebars helpers (`src/pipeline/generate.ts`)**
+- `is_map` — skips the map group during rendering
+- `section_label` — extracts human-readable sidebar label from a slide (piece name, "Overview", etc.)
+
+**CSS (`static/style.css` — major rewrite)**
+- Removed all `.reveal`-prefixed selectors and slide viewport constraints
+- Added layout shell: body flex, sidebar, detail-pane, content-section, content-subsection
+- Converted tiny relative font sizes (0.45em–0.75em, sized for reveal's scaled viewport) to `rem`-based values
+- Removed `max-height` scroll traps that existed to fit content into slide dimensions
+- Fixed code diff overflow: `pre { width: 0; min-width: 100%; overflow-x: auto }` pattern constrains the block to the container width while allowing internal horizontal scroll
+- Fixed issues card overflow: `min-width: 0` on flex child + `word-break: break-word` on `.issue-body`
+
+### Data model
+
+Untouched. `SlideDeck`, `SlideGroup`, `Slide` types and `builder.ts` unchanged — the builder still creates the map group, it just isn't rendered.
+
+### Test results
+- 34 unit tests passing (unchanged)
+- TypeScript build: clean

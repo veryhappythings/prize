@@ -4,52 +4,51 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{prTitle}} — pr-deck</title>
-  <link rel="stylesheet" href="reveal/reset.css">
-  <link rel="stylesheet" href="reveal/reveal.css">
-  <link rel="stylesheet" href="reveal/theme/black.css">
   <link rel="stylesheet" href="reveal/plugin/highlight/monokai.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="reveal">
-    <div class="slides">
+  <nav class="sidebar">
+    <div class="sidebar-brand">pr-deck</div>
+    <ul class="sidebar-nav">
       {{#each groups}}
-      <section>
-        {{> (slide_partial main.type) slide=main}}
-        {{#each sub}}
-        {{> (slide_partial type) slide=this}}
-        {{/each}}
-      </section>
+      {{#unless (is_map main.type)}}
+      <li>
+        <a href="#section-{{@index}}" class="sidebar-link" data-section="section-{{@index}}">
+          {{section_label main}}
+        </a>
+      </li>
+      {{/unless}}
       {{/each}}
-    </div>
-  </div>
+    </ul>
+  </nav>
 
-  <script src="reveal/reveal.js"></script>
-  <script src="reveal/plugin/highlight/highlight.js"></script>
-  <script src="reveal/plugin/notes/notes.js"></script>
+  <main class="detail-pane">
+    {{#each groups}}
+    {{#unless (is_map main.type)}}
+    <section class="content-section" id="section-{{@index}}">
+      {{> (slide_partial main.type) slide=main}}
+      {{#each sub}}
+      <div class="content-subsection">
+        {{> (slide_partial type) slide=this}}
+      </div>
+      {{/each}}
+    </section>
+    {{/unless}}
+    {{/each}}
+  </main>
+
+  <script src="highlight.min.js"></script>
   <script src="mermaid.min.js"></script>
   <script>
+    // Syntax highlighting
+    hljs.highlightAll();
+
+    // Mermaid diagrams
     mermaid.initialize({ startOnLoad: false, theme: 'dark' });
-
-    Reveal.initialize({
-      hash: true,
-      transition: 'slide',
-      transitionSpeed: 'fast',
-      controls: true,
-      progress: true,
-      plugins: [RevealHighlight, RevealNotes],
-      width: 960,
-      height: 700,
-      margin: 0.04,
-      minScale: 0.1,
-      maxScale: 2.0,
-    });
-
-    Reveal.on('slidechanged', async () => {
-      const diagrams = document.querySelectorAll('.mermaid:not([data-processed])');
-      for (const el of diagrams) {
+    document.addEventListener('DOMContentLoaded', async () => {
+      for (const el of document.querySelectorAll('.mermaid')) {
         const code = (el.textContent || '').trim();
-        el.setAttribute('data-processed', 'true');
         if (!code) continue;
         try {
           const id = 'mermaid-' + Math.random().toString(36).slice(2);
@@ -60,6 +59,35 @@
           el.style.display = 'none';
         }
       }
+    });
+
+    // Scroll-spy: highlight active sidebar link
+    const detailPane = document.querySelector('.detail-pane');
+    const sections = document.querySelectorAll('.content-section');
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            sidebarLinks.forEach(link => {
+              link.classList.toggle('active', link.dataset.section === id);
+            });
+          }
+        }
+      },
+      { root: detailPane, threshold: 0, rootMargin: '-10% 0px -80% 0px' }
+    );
+    sections.forEach(section => observer.observe(section));
+
+    // Smooth scroll on sidebar click
+    sidebarLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.getElementById(link.dataset.section);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
     });
   </script>
 </body>
