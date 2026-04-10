@@ -61,7 +61,7 @@ export function buildSlideDeck(prData: PRData, analysis: AllAnalysis): SlideDeck
     const sub: Slide[] = []
 
     // UML diagram (if available)
-    if (detail?.mermaidCode) {
+    if (detail?.mermaidCode && detail.mermaidCode !== 'null') {
       sub.push({ type: 'uml', pieceName: piece.name, mermaidCode: detail.mermaidCode })
     }
 

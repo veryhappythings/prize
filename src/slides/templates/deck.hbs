@@ -17,7 +17,7 @@
       <section>
         {{> (slide_partial main.type) slide=main}}
         {{#each sub}}
-        <section>{{> (slide_partial type) slide=this}}</section>
+        {{> (slide_partial type) slide=this}}
         {{/each}}
       </section>
       {{/each}}
@@ -48,11 +48,17 @@
     Reveal.on('slidechanged', async () => {
       const diagrams = document.querySelectorAll('.mermaid:not([data-processed])');
       for (const el of diagrams) {
-        const code = el.textContent || '';
-        const id = 'mermaid-' + Math.random().toString(36).slice(2);
-        const { svg } = await mermaid.render(id, code);
-        el.innerHTML = svg;
+        const code = (el.textContent || '').trim();
         el.setAttribute('data-processed', 'true');
+        if (!code) continue;
+        try {
+          const id = 'mermaid-' + Math.random().toString(36).slice(2);
+          const { svg } = await mermaid.render(id, code);
+          el.innerHTML = svg;
+        } catch (err) {
+          console.warn('Mermaid render failed:', err);
+          el.style.display = 'none';
+        }
       }
     });
   </script>

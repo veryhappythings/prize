@@ -22,7 +22,7 @@ export async function analyzeDetail(
 ): Promise<DetailAnalysis> {
   const pieceDiff = extractPieceDiff(files, piece.files)
   const umlInstruction = piece.suggestUml
-    ? `For the mermaidCode field: generate a ${piece.umlType} diagram showing ${piece.umlDescription}. Use valid Mermaid syntax.`
+    ? `For the mermaidCode field: generate a ${piece.umlType} diagram showing ${piece.umlDescription}. Strict Mermaid syntax rules: (1) NEVER use \\n inside edge labels — keep edge labels to 1–4 plain words; (2) NEVER use parentheses () inside edge labels; (3) NEVER use apostrophes, colons, or emoji in labels — wrap any label containing special chars in double quotes; (4) Use simple alphanumeric node IDs (A, B, C1, etc.). Produce the minimal diagram that conveys the core flow.`
     : 'For the mermaidCode field: return null (no diagram needed for this piece).'
 
   const prompt = loadPrompt('detail', {

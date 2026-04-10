@@ -77,22 +77,25 @@
   letter-spacing: 0.1em;
   margin-bottom: 0.3em;
 }
-.piece-description { font-size: 0.75em; margin-bottom: 0.8em; }
+.piece-description { font-size: 0.68em; margin-bottom: 0.8em; overflow-y: auto; max-height: 380px; }
 .file-list { font-size: 0.55em; font-family: monospace; list-style: none; padding: 0; color: var(--rm-muted); }
 .file-list li::before { content: '📄 '; }
 
 /* Signatures */
-.signatures-table { font-size: 0.55em; width: 100%; border-collapse: collapse; }
+.signatures-table { font-size: 0.55em; width: 100%; border-collapse: collapse; table-layout: fixed; }
 .signatures-table th { color: var(--rm-muted); font-weight: normal; text-align: left; padding: 0.3em 0.5em; border-bottom: 1px solid #333; }
-.signatures-table td { padding: 0.4em 0.5em; border-bottom: 1px solid #222; vertical-align: top; }
-.signatures-table .file-path { color: var(--rm-muted); font-family: monospace; }
+.signatures-table th:nth-child(1) { width: 18%; }
+.signatures-table th:nth-child(2) { width: 38%; }
+.signatures-table th:nth-child(3) { width: 44%; }
+.signatures-table td { padding: 0.4em 0.5em; border-bottom: 1px solid #222; vertical-align: top; word-break: break-word; }
+.signatures-table .file-path { color: var(--rm-muted); font-family: monospace; word-break: break-all; }
 
 /* Walkthrough */
-.walkthrough-text { font-size: 0.75em; line-height: 1.7; text-align: left; max-width: 800px; margin: 0 auto; }
+.walkthrough-text { font-size: 0.65em; line-height: 1.6; text-align: left; max-width: 800px; margin: 0 auto; overflow-y: auto; max-height: 560px; }
 
 /* Code */
 .slide-code .filename { font-size: 0.55em; font-family: monospace; color: var(--rm-muted); margin-bottom: 0.5em; }
-.reveal pre { font-size: 0.45em; max-height: 420px; overflow-y: auto; }
+.reveal pre { font-size: 0.45em; max-height: 420px; overflow-y: auto; overflow-x: auto; }
 .status { font-size: 0.85em; padding: 0.1em 0.4em; border-radius: 3px; margin-left: 0.5em; }
 .status-added { background: #1a3a1a; color: var(--rm-green); }
 .status-modified { background: #2a2a1a; color: var(--rm-yellow); }
@@ -104,7 +107,7 @@
 .reveal pre code.diff .hljs-deletion { color: var(--rm-red); }
 
 /* Issues */
-.issues-list { list-style: none; padding: 0; font-size: 0.65em; }
+.issues-list { list-style: none; padding: 0; font-size: 0.65em; overflow-y: auto; max-height: 580px; }
 .issue { display: flex; gap: 0.7em; align-items: flex-start; padding: 0.5em; border-left: 3px solid transparent; margin-bottom: 0.4em; }
 .issue-high { border-color: var(--rm-red); background: #2a1a1a; }
 .issue-medium { border-color: var(--rm-yellow); background: #2a2a1a; }
@@ -131,6 +134,21 @@
 .stat-label { font-size: 0.6em; color: var(--rm-muted); }
 .final-risks ul { font-size: 0.65em; text-align: left; }
 .summary-text { font-size: 0.7em; color: var(--rm-muted); }
+
+/* UML diagram — scale SVG to fit the slide */
+.slide-uml .mermaid {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  max-height: 580px;
+  overflow: hidden;
+}
+.slide-uml .mermaid svg {
+  max-width: 100%;
+  max-height: 580px;
+  height: auto !important;
+  width: auto !important;
+}
 
 /* Overflow safety net — slides that exceed canvas height become scrollable */
 .reveal .slides section {

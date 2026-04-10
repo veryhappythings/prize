@@ -47,6 +47,21 @@ function registerPartials() {
 function registerHelpers() {
   // Allows {{> (slide_partial type) slide=this}} dynamic partial lookup
   Handlebars.registerHelper('slide_partial', (type: string) => type)
+
+  // Renders inline markdown (bold, italic, backtick code) as HTML.
+  // Input is HTML-escaped first to prevent injection.
+  Handlebars.registerHelper('md', (text: string) => {
+    if (!text) return ''
+    const escaped = String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+    const html = escaped
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+    return new Handlebars.SafeString(html)
+  })
 }
 
 export async function generateSite(deck: SlideDeck, outputDir: string): Promise<string> {
