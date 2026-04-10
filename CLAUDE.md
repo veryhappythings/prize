@@ -9,11 +9,20 @@ yarn dev <pr-url>      # run the CLI without building (tsx)
 yarn build             # compile to dist/ with tsup
 yarn test              # run all tests
 yarn test --reporter=verbose  # run tests with output
+yarn test:watch        # run tests in watch mode
+yarn lint              # run ESLint on src/
 ```
 
 To run a single test file:
 ```sh
 yarn vitest run test/cache.test.ts
+```
+
+CLI flags accepted by `yarn dev`:
+```sh
+yarn dev <pr-url> --force    # bypass cache, re-run full pipeline
+yarn dev <pr-url> --port 3000
+yarn dev <pr-url> --no-open  # skip auto-opening the browser
 ```
 
 Required env vars before running:
@@ -40,6 +49,10 @@ export LLM_MODEL=us.anthropic.claude-sonnet-4-6-v1:0              # optional
 - Always save implementation plans into `docs/`
 - Always update `docs/diary.md` after completing work
 
+## Pre-commit hooks
+
+Uses the Python `pre-commit` framework (`.pre-commit-config.yaml`), not Husky. On every commit it runs: trailing-whitespace/EOF fixes, YAML/JSON validation, `yarn lint`, `yarn tsc --noEmit`, and `yarn test`.
+
 ## Architecture
 
 The tool is a pipeline: **fetch → analyze → generate → serve**. Each step's output is cached in `~/.pr-deck/<owner>-<repo>-<pr_number>/` and skipped on re-runs if the PR `updated_at` hasn't changed.
@@ -51,6 +64,10 @@ The tool is a pipeline: **fetch → analyze → generate → serve**. Each step'
 3. `src/slides/builder.ts` — transforms analysis into a `SlideDeck` (groups of slides)
 4. `src/pipeline/generate.ts` — renders Handlebars templates to a static `index.html`
 5. `src/server/index.ts` — serves the site locally and opens the browser
+
+### LLM provider abstraction
+
+`src/config.ts` loads and validates env vars for the active provider. `src/llm/factory.ts` returns a concrete `LLMClient` (from `src/llm/interface.ts`) for one of three providers in `src/llm/providers/`: `anthropic`, `openai` (OpenAI-compatible), or `bedrock`. All three implement a single method: `callWithTool<T>()`.
 
 ### LLM analysis
 
