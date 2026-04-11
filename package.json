@@ -7,7 +7,7 @@
     "pr-deck": "./dist/cli.js"
   },
   "scripts": {
-    "build": "tsup && cp -r src/llm/prompts dist && mkdir -p dist/slides && cp -r src/slides/templates dist/slides/templates",
+    "build": "tsup && cp -r src/llm/prompts dist && mkdir -p dist/sections && cp -r src/sections/templates dist/sections/templates",
     "dev": "tsx src/cli.ts",
     "test": "vitest run",
     "test:watch": "vitest",

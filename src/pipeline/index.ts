@@ -10,7 +10,7 @@ import { createLLMClient } from '../llm/factory.js'
 import { analyzeOverview } from '../llm/analyze-overview.js'
 import { analyzeStructure } from '../llm/analyze-structure.js'
 import { analyzeAllDetails } from '../llm/analyze-detail.js'
-import { buildSlideDeck } from '../slides/builder.js'
+import { buildPage } from '../sections/builder.js'
 import { generateSite } from './generate.js'
 import { startServer } from '../server/index.js'
 import type { PRData } from '../github/types.js'
@@ -106,15 +106,15 @@ export async function run(ref: PRRef, config: Config, opts: RunOptions = {}) {
     logger.success('Detail analysis complete')
   }
 
-  // ── Step 5: Build slide deck ───────────────────────────────────────────────
+  // ── Step 5: Build page ────────────────────────────────────────────────────
   const analysis: AllAnalysis = { overview, structure, details }
-  const deck = buildSlideDeck(prData, analysis)
-  cache.set('slides', deck)
+  const page = buildPage(prData, analysis)
+  cache.set('sections', page)
 
   // ── Step 6: Generate HTML site ─────────────────────────────────────────────
   const siteDir = join(config.cacheDir, cacheKey, 'site')
-  logger.startSpinner('Generating slideshow...')
-  const indexPath = await generateSite(deck, siteDir)
+  logger.startSpinner('Generating site...')
+  const indexPath = await generateSite(page, siteDir)
   logger.stopSpinner(`Generated: ${indexPath}`)
 
   // ── Step 7: Serve + open browser ──────────────────────────────────────────

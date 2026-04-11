@@ -2,7 +2,7 @@ import Handlebars from 'handlebars'
 import { readFileSync, writeFileSync, mkdirSync, cpSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { SlideDeck } from '../slides/types.js'
+import type { Page } from '../sections/types.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -23,11 +23,11 @@ function findProjectRoot(): string {
 const projectRoot = findProjectRoot()
 
 function loadTemplate(name: string): string {
-  return readFileSync(join(projectRoot, 'src/slides/templates', `${name}.hbs`), 'utf-8')
+  return readFileSync(join(projectRoot, 'src/sections/templates', `${name}.hbs`), 'utf-8')
 }
 
 function registerPartials() {
-  const slideTypes = [
+  const sectionTypes = [
     'title',
     'overview',
     'map',
@@ -39,14 +39,14 @@ function registerPartials() {
     'issues',
     'summary',
   ]
-  for (const type of slideTypes) {
+  for (const type of sectionTypes) {
     Handlebars.registerPartial(type, loadTemplate(type))
   }
 }
 
 function registerHelpers() {
-  // Allows {{> (slide_partial type) slide=this}} dynamic partial lookup
-  Handlebars.registerHelper('slide_partial', (type: string) => type)
+  // Allows {{> (section_partial type) section=this}} dynamic partial lookup
+  Handlebars.registerHelper('section_partial', (type: string) => type)
 
   // Renders inline markdown (bold, italic, backtick code) as HTML.
   // Input is HTML-escaped first to prevent injection.
@@ -63,34 +63,34 @@ function registerHelpers() {
     return new Handlebars.SafeString(html)
   })
 
-  // Returns true if the slide type is 'map' (used to skip map group in rendering)
+  // Returns true if the section type is 'map' (used to skip map group in rendering)
   Handlebars.registerHelper('is_map', (type: string) => type === 'map')
 
-  // Extracts a human-readable sidebar label from a main slide
-  Handlebars.registerHelper('section_label', (slide: Record<string, unknown>) => {
-    switch (slide.type) {
-      case 'title': return slide.prTitle as string
+  // Extracts a human-readable sidebar label from a main section
+  Handlebars.registerHelper('section_label', (section: Record<string, unknown>) => {
+    switch (section.type) {
+      case 'title': return section.prTitle as string
       case 'overview': return 'Overview'
-      case 'piece-summary': return slide.name as string
+      case 'piece-summary': return section.name as string
       case 'summary': return 'Summary'
-      default: return String(slide.type)
+      default: return String(section.type)
     }
   })
 }
 
-export async function generateSite(deck: SlideDeck, outputDir: string): Promise<string> {
+export async function generateSite(page: Page, outputDir: string): Promise<string> {
   mkdirSync(outputDir, { recursive: true })
 
   registerPartials()
   registerHelpers()
 
   // Render main HTML
-  const deckTemplate = Handlebars.compile(loadTemplate('deck'))
-  const html = deckTemplate(deck)
+  const pageTemplate = Handlebars.compile(loadTemplate('page'))
+  const html = pageTemplate(page)
   const indexPath = join(outputDir, 'index.html')
   writeFileSync(indexPath, html, 'utf-8')
 
-  // Copy static assets (reveal.js, mermaid, style.css)
+  // Copy static assets (mermaid, style.css, etc.)
   const staticSrc = join(projectRoot, 'static')
   if (existsSync(staticSrc)) {
     cpSync(staticSrc, outputDir, { recursive: true })

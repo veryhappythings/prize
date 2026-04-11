@@ -1,4 +1,4 @@
-export type SlideType =
+export type SectionType =
   | 'title'
   | 'overview'
   | 'map'
@@ -10,7 +10,7 @@ export type SlideType =
   | 'issues'
   | 'summary'
 
-export interface TitleSlide {
+export interface TitleSection {
   type: 'title'
   prTitle: string
   prUrl: string
@@ -20,7 +20,7 @@ export interface TitleSlide {
   jiraTicket: string | null
 }
 
-export interface OverviewSlide {
+export interface OverviewSection {
   type: 'overview'
   summary: string
   motivation: string
@@ -32,12 +32,12 @@ export interface OverviewSlide {
   deletions: number
 }
 
-export interface MapSlide {
+export interface MapSection {
   type: 'map'
   pieces: Array<{ name: string; description: string }>
 }
 
-export interface PieceSummarySlide {
+export interface PieceSummarySection {
   type: 'piece-summary'
   pieceIndex: number
   totalPieces: number
@@ -46,25 +46,25 @@ export interface PieceSummarySlide {
   files: string[]
 }
 
-export interface UmlSlide {
+export interface UmlSection {
   type: 'uml'
   pieceName: string
   mermaidCode: string
 }
 
-export interface SignaturesSlide {
+export interface SignaturesSection {
   type: 'signatures'
   pieceName: string
   signatures: Array<{ name: string; file: string; explanation: string }>
 }
 
-export interface WalkthroughSlide {
+export interface WalkthroughSection {
   type: 'walkthrough'
   pieceName: string
   walkthrough: string
 }
 
-export interface CodeSlide {
+export interface CodeSection {
   type: 'code'
   pieceName: string
   filename: string
@@ -72,13 +72,13 @@ export interface CodeSlide {
   status: string
 }
 
-export interface IssuesSlide {
+export interface IssuesSection {
   type: 'issues'
   pieceName: string
   issues: Array<{ severity: 'low' | 'medium' | 'high'; description: string }>
 }
 
-export interface SummarySlide {
+export interface SummarySection {
   type: 'summary'
   summary: string
   risks: string[]
@@ -87,28 +87,28 @@ export interface SummarySlide {
   deletions: number
 }
 
-export type Slide =
-  | TitleSlide
-  | OverviewSlide
-  | MapSlide
-  | PieceSummarySlide
-  | UmlSlide
-  | SignaturesSlide
-  | WalkthroughSlide
-  | CodeSlide
-  | IssuesSlide
-  | SummarySlide
+export type Section =
+  | TitleSection
+  | OverviewSection
+  | MapSection
+  | PieceSummarySection
+  | UmlSection
+  | SignaturesSection
+  | WalkthroughSection
+  | CodeSection
+  | IssuesSection
+  | SummarySection
 
-/** A group represents a horizontal position in the deck.
- *  Within a group, slides stack vertically. */
-export interface SlideGroup {
-  /** The "top" slide shown when navigating horizontally */
-  main: Slide
-  /** Vertical slides accessed by pressing Down */
-  sub: Slide[]
+/** A group represents one entry in the sidebar.
+ *  Within a group, sub-sections stack below the main section. */
+export interface SectionGroup {
+  /** The primary section shown at the top of the group */
+  main: Section
+  /** Sub-sections rendered below the main section */
+  sub: Section[]
 }
 
-export interface SlideDeck {
+export interface Page {
   prTitle: string
-  groups: SlideGroup[]
+  groups: SectionGroup[]
 }

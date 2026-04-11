@@ -49,7 +49,7 @@ describe('Cache', () => {
   })
 
   it('returns null for missing keys', () => {
-    expect(cache.get('slides')).toBeNull()
+    expect(cache.get('sections')).toBeNull()
     expect(cache.getText('pr-diff')).toBeNull()
   })
 })

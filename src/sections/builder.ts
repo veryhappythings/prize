@@ -1,14 +1,14 @@
 import type { PRData } from '../github/types.js'
 import type { AllAnalysis } from '../llm/types.js'
-import type { SlideDeck, SlideGroup, Slide } from './types.js'
+import type { Page, SectionGroup, Section } from './types.js'
 
-export function buildSlideDeck(prData: PRData, analysis: AllAnalysis): SlideDeck {
+export function buildPage(prData: PRData, analysis: AllAnalysis): Page {
   const { overview, structure, details } = analysis
   const { metadata, files } = prData
 
-  const groups: SlideGroup[] = []
+  const groups: SectionGroup[] = []
 
-  // 1. Title slide (standalone)
+  // 1. Title section (standalone)
   groups.push({
     main: {
       type: 'title',
@@ -26,7 +26,7 @@ export function buildSlideDeck(prData: PRData, analysis: AllAnalysis): SlideDeck
     sub: [],
   })
 
-  // 2. Overview slide (standalone)
+  // 2. Overview section (standalone)
   groups.push({
     main: {
       type: 'overview',
@@ -42,7 +42,7 @@ export function buildSlideDeck(prData: PRData, analysis: AllAnalysis): SlideDeck
     sub: [],
   })
 
-  // 3. Map slide — table of contents
+  // 3. Map section — table of contents
   const orderedPieces = structure.reviewOrder
     .map((id) => structure.pieces.find((p) => p.id === id))
     .filter((p): p is NonNullable<typeof p> => p !== undefined)
@@ -55,27 +55,27 @@ export function buildSlideDeck(prData: PRData, analysis: AllAnalysis): SlideDeck
     sub: [],
   })
 
-  // 4. One group per piece (horizontal navigation)
+  // 4. One group per piece
   orderedPieces.forEach((piece, idx) => {
     const detail = details[piece.id]
-    const sub: Slide[] = []
+    const sub: Section[] = []
 
     // UML diagram (if available)
     if (detail?.mermaidCode && detail.mermaidCode !== 'null') {
       sub.push({ type: 'uml', pieceName: piece.name, mermaidCode: detail.mermaidCode })
     }
 
-    // Signatures slide
+    // Signatures section
     if (detail?.signatures?.length) {
       sub.push({ type: 'signatures', pieceName: piece.name, signatures: detail.signatures })
     }
 
-    // Walkthrough slide
+    // Walkthrough section
     if (detail?.walkthrough) {
       sub.push({ type: 'walkthrough', pieceName: piece.name, walkthrough: detail.walkthrough })
     }
 
-    // Code slides — one per file in the piece
+    // Code sections — one per file in the piece
     const pieceFileSet = new Set(piece.files)
     for (const f of files) {
       if (pieceFileSet.has(f.filename) && f.patch) {
@@ -89,7 +89,7 @@ export function buildSlideDeck(prData: PRData, analysis: AllAnalysis): SlideDeck
       }
     }
 
-    // Issues slide (if any)
+    // Issues section (if any)
     if (detail?.issues?.length) {
       sub.push({ type: 'issues', pieceName: piece.name, issues: detail.issues })
     }
@@ -107,7 +107,7 @@ export function buildSlideDeck(prData: PRData, analysis: AllAnalysis): SlideDeck
     })
   })
 
-  // 5. Summary slide
+  // 5. Summary section
   groups.push({
     main: {
       type: 'summary',

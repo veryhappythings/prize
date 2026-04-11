@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { buildSlideDeck } from '../src/slides/builder.js'
+import { buildPage } from '../src/sections/builder.js'
 import type { PRData, PRMetadata, PRFile } from '../src/github/types.js'
 import type { AllAnalysis, OverviewAnalysis, StructureAnalysis, DetailAnalysis } from '../src/llm/types.js'
-import type { TitleSlide, OverviewSlide, SummarySlide, PieceSummarySlide } from '../src/slides/types.js'
+import type { TitleSection, OverviewSection, SummarySection, PieceSummarySection } from '../src/sections/types.js'
 
 // ─── Factories ────────────────────────────────────────────────────────────────
 
@@ -92,46 +92,46 @@ function makeAnalysis(
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function titleSlide(deck: ReturnType<typeof buildSlideDeck>) {
-  return deck.groups[0].main as TitleSlide
+function titleSection(page: ReturnType<typeof buildPage>) {
+  return page.groups[0].main as TitleSection
 }
 
-function overviewSlide(deck: ReturnType<typeof buildSlideDeck>) {
-  return deck.groups[1].main as OverviewSlide
+function overviewSection(page: ReturnType<typeof buildPage>) {
+  return page.groups[1].main as OverviewSection
 }
 
-function summarySlide(deck: ReturnType<typeof buildSlideDeck>) {
-  return deck.groups[deck.groups.length - 1].main as SummarySlide
+function summarySection(page: ReturnType<typeof buildPage>) {
+  return page.groups[page.groups.length - 1].main as SummarySection
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
-describe('buildSlideDeck', () => {
-  describe('deck structure', () => {
+describe('buildPage', () => {
+  describe('page structure', () => {
     it('contains title, overview, map, and summary with no pieces', () => {
-      const deck = buildSlideDeck(makePRData(), makeAnalysis())
+      const page = buildPage(makePRData(), makeAnalysis())
       // title + overview + map + summary = 4 groups
-      expect(deck.groups).toHaveLength(4)
-      expect(deck.groups[0].main.type).toBe('title')
-      expect(deck.groups[1].main.type).toBe('overview')
-      expect(deck.groups[2].main.type).toBe('map')
-      expect(deck.groups[deck.groups.length - 1].main.type).toBe('summary')
+      expect(page.groups).toHaveLength(4)
+      expect(page.groups[0].main.type).toBe('title')
+      expect(page.groups[1].main.type).toBe('overview')
+      expect(page.groups[2].main.type).toBe('map')
+      expect(page.groups[page.groups.length - 1].main.type).toBe('summary')
     })
 
     it('adds one group per piece', () => {
       const structure = makeStructure([makePiece('p1'), makePiece('p2'), makePiece('p3')])
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({}, structure))
+      const page = buildPage(makePRData(), makeAnalysis({}, structure))
       // title + overview + map + 3 pieces + summary = 7
-      expect(deck.groups).toHaveLength(7)
+      expect(page.groups).toHaveLength(7)
     })
 
-    it('sets prTitle on the deck', () => {
-      const deck = buildSlideDeck(makePRData({ metadata: { title: 'My PR' } }), makeAnalysis())
-      expect(deck.prTitle).toBe('My PR')
+    it('sets prTitle on the page', () => {
+      const page = buildPage(makePRData({ metadata: { title: 'My PR' } }), makeAnalysis())
+      expect(page.prTitle).toBe('My PR')
     })
   })
 
-  describe('title slide', () => {
+  describe('title section', () => {
     it('populates all fields from metadata and overview', () => {
       const prData = makePRData({
         metadata: {
@@ -141,48 +141,48 @@ describe('buildSlideDeck', () => {
           createdAt: '2024-06-15T12:00:00Z',
         },
       })
-      const deck = buildSlideDeck(prData, makeAnalysis({ jiraTicket: 'PROJ-99' }))
-      const slide = titleSlide(deck)
-      expect(slide.prTitle).toBe('Add feature')
-      expect(slide.author).toBe('bob')
-      expect(slide.prUrl).toBe('https://github.com/org/repo/pull/42')
-      expect(slide.jiraTicket).toBe('PROJ-99')
+      const page = buildPage(prData, makeAnalysis({ jiraTicket: 'PROJ-99' }))
+      const section = titleSection(page)
+      expect(section.prTitle).toBe('Add feature')
+      expect(section.author).toBe('bob')
+      expect(section.prUrl).toBe('https://github.com/org/repo/pull/42')
+      expect(section.jiraTicket).toBe('PROJ-99')
     })
 
     it('passes through a valid jiraTicket', () => {
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({ jiraTicket: 'ABC-123' }))
-      expect(titleSlide(deck).jiraTicket).toBe('ABC-123')
+      const page = buildPage(makePRData(), makeAnalysis({ jiraTicket: 'ABC-123' }))
+      expect(titleSection(page).jiraTicket).toBe('ABC-123')
     })
 
     it('keeps null jiraTicket as null', () => {
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({ jiraTicket: null }))
-      expect(titleSlide(deck).jiraTicket).toBeNull()
+      const page = buildPage(makePRData(), makeAnalysis({ jiraTicket: null }))
+      expect(titleSection(page).jiraTicket).toBeNull()
     })
 
     it('normalises the string "null" returned by LLM to actual null', () => {
       // The LLM sometimes returns the string "null" instead of JSON null.
       // The builder must convert it so the template guard works correctly.
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({ jiraTicket: 'null' as any }))
-      expect(titleSlide(deck).jiraTicket).toBeNull()
+      const page = buildPage(makePRData(), makeAnalysis({ jiraTicket: 'null' as any }))
+      expect(titleSection(page).jiraTicket).toBeNull()
     })
 
     it('formats the date in human-readable form', () => {
-      const deck = buildSlideDeck(
+      const page = buildPage(
         makePRData({ metadata: { createdAt: '2024-03-07T00:00:00Z' } }),
         makeAnalysis(),
       )
-      expect(titleSlide(deck).date).toMatch(/March/)
-      expect(titleSlide(deck).date).toMatch(/2024/)
+      expect(titleSection(page).date).toMatch(/March/)
+      expect(titleSection(page).date).toMatch(/2024/)
     })
   })
 
-  describe('overview slide stats', () => {
+  describe('overview section stats', () => {
     it('reflects changedFiles, additions, deletions from metadata', () => {
       const prData = makePRData({ metadata: { changedFiles: 7, additions: 120, deletions: 45 } })
-      const slide = overviewSlide(buildSlideDeck(prData, makeAnalysis()))
-      expect(slide.totalFiles).toBe(7)
-      expect(slide.additions).toBe(120)
-      expect(slide.deletions).toBe(45)
+      const section = overviewSection(buildPage(prData, makeAnalysis()))
+      expect(section.totalFiles).toBe(7)
+      expect(section.additions).toBe(120)
+      expect(section.deletions).toBe(45)
     })
 
     it('carries over summary, motivation, risks, c4Context, affectedAreas', () => {
@@ -193,27 +193,27 @@ describe('buildSlideDeck', () => {
         c4Context: 'C4',
         affectedAreas: ['A', 'B'],
       })
-      const slide = overviewSlide(buildSlideDeck(makePRData(), makeAnalysis(overview)))
-      expect(slide.summary).toBe('S')
-      expect(slide.motivation).toBe('M')
-      expect(slide.risks).toEqual(['R1', 'R2'])
-      expect(slide.c4Context).toBe('C4')
-      expect(slide.affectedAreas).toEqual(['A', 'B'])
+      const section = overviewSection(buildPage(makePRData(), makeAnalysis(overview)))
+      expect(section.summary).toBe('S')
+      expect(section.motivation).toBe('M')
+      expect(section.risks).toEqual(['R1', 'R2'])
+      expect(section.c4Context).toBe('C4')
+      expect(section.affectedAreas).toEqual(['A', 'B'])
     })
   })
 
-  describe('summary slide stats', () => {
+  describe('summary section stats', () => {
     it('reflects changedFiles, additions, deletions from metadata', () => {
       const prData = makePRData({ metadata: { changedFiles: 4, additions: 33, deletions: 11 } })
-      const slide = summarySlide(buildSlideDeck(prData, makeAnalysis()))
-      expect(slide.totalFiles).toBe(4)
-      expect(slide.additions).toBe(33)
-      expect(slide.deletions).toBe(11)
+      const section = summarySection(buildPage(prData, makeAnalysis()))
+      expect(section.totalFiles).toBe(4)
+      expect(section.additions).toBe(33)
+      expect(section.deletions).toBe(11)
     })
 
     it('mirrors the overview summary text', () => {
-      const slide = summarySlide(buildSlideDeck(makePRData(), makeAnalysis({ summary: 'Done.' })))
-      expect(slide.summary).toBe('Done.')
+      const section = summarySection(buildPage(makePRData(), makeAnalysis({ summary: 'Done.' })))
+      expect(section.summary).toBe('Done.')
     })
   })
 
@@ -224,98 +224,98 @@ describe('buildSlideDeck', () => {
       const p3 = makePiece('p3')
       // reviewOrder is reversed
       const structure = makeStructure([p1, p2, p3], ['p3', 'p1', 'p2'])
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({}, structure))
-      const pieceGroups = deck.groups.slice(3, -1) as Array<{ main: PieceSummarySlide }>
+      const page = buildPage(makePRData(), makeAnalysis({}, structure))
+      const pieceGroups = page.groups.slice(3, -1) as Array<{ main: PieceSummarySection }>
       expect(pieceGroups.map((g) => g.main.name)).toEqual(['Piece p3', 'Piece p1', 'Piece p2'])
     })
 
     it('skips pieces referenced in reviewOrder that do not exist in pieces', () => {
       const structure = makeStructure([makePiece('p1')], ['p1', 'ghost'])
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({}, structure))
+      const page = buildPage(makePRData(), makeAnalysis({}, structure))
       // title + overview + map + 1 piece + summary = 5
-      expect(deck.groups).toHaveLength(5)
+      expect(page.groups).toHaveLength(5)
     })
   })
 
-  describe('per-piece vertical slides', () => {
-    it('includes a UML slide when mermaidCode is present', () => {
+  describe('per-piece sub-sections', () => {
+    it('includes a UML section when mermaidCode is present', () => {
       const structure = makeStructure([makePiece('p1', ['src/foo.ts'])])
       const details = { p1: makeDetail('p1', { mermaidCode: 'graph LR; A-->B' }) }
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({}, structure, details))
-      const pieceGroup = deck.groups[3]
+      const page = buildPage(makePRData(), makeAnalysis({}, structure, details))
+      const pieceGroup = page.groups[3]
       expect(pieceGroup.sub.some((s) => s.type === 'uml')).toBe(true)
     })
 
-    it('omits a UML slide when mermaidCode is null', () => {
+    it('omits a UML section when mermaidCode is null', () => {
       const structure = makeStructure([makePiece('p1', ['src/foo.ts'])])
       const details = { p1: makeDetail('p1', { mermaidCode: null }) }
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({}, structure, details))
-      expect(deck.groups[3].sub.some((s) => s.type === 'uml')).toBe(false)
+      const page = buildPage(makePRData(), makeAnalysis({}, structure, details))
+      expect(page.groups[3].sub.some((s) => s.type === 'uml')).toBe(false)
     })
 
-    it('includes a signatures slide when signatures are present', () => {
+    it('includes a signatures section when signatures are present', () => {
       const structure = makeStructure([makePiece('p1')])
       const details = {
         p1: makeDetail('p1', {
           signatures: [{ name: 'myFn', file: 'src/foo.ts', explanation: 'Does X' }],
         }),
       }
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({}, structure, details))
-      expect(deck.groups[3].sub.some((s) => s.type === 'signatures')).toBe(true)
+      const page = buildPage(makePRData(), makeAnalysis({}, structure, details))
+      expect(page.groups[3].sub.some((s) => s.type === 'signatures')).toBe(true)
     })
 
-    it('omits signatures slide when signatures array is empty', () => {
+    it('omits signatures section when signatures array is empty', () => {
       const structure = makeStructure([makePiece('p1')])
       const details = { p1: makeDetail('p1', { signatures: [] }) }
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({}, structure, details))
-      expect(deck.groups[3].sub.some((s) => s.type === 'signatures')).toBe(false)
+      const page = buildPage(makePRData(), makeAnalysis({}, structure, details))
+      expect(page.groups[3].sub.some((s) => s.type === 'signatures')).toBe(false)
     })
 
-    it('includes an issues slide when issues are present', () => {
+    it('includes an issues section when issues are present', () => {
       const structure = makeStructure([makePiece('p1')])
       const details = {
         p1: makeDetail('p1', { issues: [{ severity: 'high', description: 'Oops' }] }),
       }
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({}, structure, details))
-      expect(deck.groups[3].sub.some((s) => s.type === 'issues')).toBe(true)
+      const page = buildPage(makePRData(), makeAnalysis({}, structure, details))
+      expect(page.groups[3].sub.some((s) => s.type === 'issues')).toBe(true)
     })
 
-    it('omits issues slide when issues array is empty', () => {
+    it('omits issues section when issues array is empty', () => {
       const structure = makeStructure([makePiece('p1')])
       const details = { p1: makeDetail('p1', { issues: [] }) }
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({}, structure, details))
-      expect(deck.groups[3].sub.some((s) => s.type === 'issues')).toBe(false)
+      const page = buildPage(makePRData(), makeAnalysis({}, structure, details))
+      expect(page.groups[3].sub.some((s) => s.type === 'issues')).toBe(false)
     })
 
-    it('adds code slides only for files belonging to the piece', () => {
+    it('adds code sections only for files belonging to the piece', () => {
       const fooFile = makeFile('src/foo.ts')
       const barFile = makeFile('src/bar.ts')
       const structure = makeStructure([makePiece('p1', ['src/foo.ts'])])
       const details = { p1: makeDetail('p1') }
-      const deck = buildSlideDeck(
+      const page = buildPage(
         makePRData({ files: [fooFile, barFile] }),
         makeAnalysis({}, structure, details),
       )
-      const codeSlides = deck.groups[3].sub.filter((s) => s.type === 'code')
-      expect(codeSlides).toHaveLength(1)
-      expect((codeSlides[0] as any).filename).toBe('src/foo.ts')
+      const codeSections = page.groups[3].sub.filter((s) => s.type === 'code')
+      expect(codeSections).toHaveLength(1)
+      expect((codeSections[0] as any).filename).toBe('src/foo.ts')
     })
 
-    it('omits code slides for files without a patch', () => {
+    it('omits code sections for files without a patch', () => {
       const noPatch = makeFile('src/foo.ts', { patch: undefined })
       const structure = makeStructure([makePiece('p1', ['src/foo.ts'])])
-      const deck = buildSlideDeck(
+      const page = buildPage(
         makePRData({ files: [noPatch] }),
         makeAnalysis({}, structure, { p1: makeDetail('p1') }),
       )
-      expect(deck.groups[3].sub.filter((s) => s.type === 'code')).toHaveLength(0)
+      expect(page.groups[3].sub.filter((s) => s.type === 'code')).toHaveLength(0)
     })
 
-    it('sets pieceIndex and totalPieces correctly on piece-summary slides', () => {
+    it('sets pieceIndex and totalPieces correctly on piece-summary sections', () => {
       const structure = makeStructure([makePiece('p1'), makePiece('p2')])
-      const deck = buildSlideDeck(makePRData(), makeAnalysis({}, structure))
-      const p1Main = deck.groups[3].main as PieceSummarySlide
-      const p2Main = deck.groups[4].main as PieceSummarySlide
+      const page = buildPage(makePRData(), makeAnalysis({}, structure))
+      const p1Main = page.groups[3].main as PieceSummarySection
+      const p2Main = page.groups[4].main as PieceSummarySection
       expect(p1Main.pieceIndex).toBe(1)
       expect(p1Main.totalPieces).toBe(2)
       expect(p2Main.pieceIndex).toBe(2)

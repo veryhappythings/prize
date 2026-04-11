@@ -27,10 +27,10 @@
     {{#each groups}}
     {{#unless (is_map main.type)}}
     <section class="content-section" id="section-{{@index}}">
-      {{> (slide_partial main.type) slide=main}}
+      {{> (section_partial main.type) section=main}}
       {{#each sub}}
       <div class="content-subsection">
-        {{> (slide_partial type) slide=this}}
+        {{> (section_partial type) section=this}}
       </div>
       {{/each}}
     </section>

@@ -1,0 +1,11 @@
+<div class="section-summary">
+  <h2>Review Complete</h2>
+  <p class="summary-text">{{{md section.summary}}}</p>
+
+  {{#if section.risks.length}}
+  <div class="final-risks">
+    <h4>Key risks to keep in mind</h4>
+    <ul>{{#each section.risks}}<li>{{this}}</li>{{/each}}</ul>
+  </div>
+  {{/if}}
+</div>

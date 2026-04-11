@@ -1,7 +1,7 @@
-<div class="slide-issues">
-  <h3>{{slide.pieceName}} — Issues</h3>
+<div class="section-issues">
+  <h3>{{section.pieceName}} — Issues</h3>
   <ul class="issues-list">
-    {{#each slide.issues}}
+    {{#each section.issues}}
     <li class="issue issue-{{severity}}">
       <span class="severity-badge">{{severity}}</span>
       <div class="issue-body">{{{md description}}}</div>

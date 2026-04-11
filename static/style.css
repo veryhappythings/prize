@@ -120,12 +120,12 @@ h2 { font-size: 1.3rem; color: var(--rm-accent); margin: 0 0 0.5em; }
 h3 { font-size: 1.05rem; color: var(--rm-accent); margin: 0 0 0.5em; }
 h4 { font-size: 0.8rem; color: var(--rm-muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 0.3em; }
 
-/* Title slide */
-.slide-title {
+/* Title section */
+.section-title {
   padding: 1.5rem 0 0.5rem;
 }
 
-.slide-title .rm-badge {
+.section-title .rm-badge {
   display: inline-block;
   background: var(--rm-accent);
   color: white;
@@ -137,13 +137,13 @@ h4 { font-size: 0.8rem; color: var(--rm-muted); text-transform: uppercase; lette
   text-transform: uppercase;
 }
 
-.slide-title .subtitle {
+.section-title .subtitle {
   color: var(--rm-muted);
   font-size: 0.9rem;
   margin-top: 0.4em;
 }
 
-.slide-title .jira-ticket {
+.section-title .jira-ticket {
   display: inline-block;
   background: #2a2a4a;
   border: 1px solid var(--rm-accent);
@@ -155,20 +155,20 @@ h4 { font-size: 0.8rem; color: var(--rm-muted); text-transform: uppercase; lette
   margin-top: 0.4em;
 }
 
-.slide-title .pr-url {
+.section-title .pr-url {
   font-size: 0.8rem;
   color: var(--rm-muted);
   margin-top: 0.6em;
 }
 
-.slide-title .pr-url a {
+.section-title .pr-url a {
   color: var(--rm-muted);
 }
 
 /* Overview */
-.slide-overview h2 { margin-bottom: 0.3em; }
+.section-overview h2 { margin-bottom: 0.3em; }
 
-.slide-overview .summary {
+.section-overview .summary {
   font-size: 0.95rem;
   margin-bottom: 1rem;
   line-height: 1.6;
@@ -199,7 +199,7 @@ h4 { font-size: 0.8rem; color: var(--rm-muted); text-transform: uppercase; lette
 }
 
 /* Piece summary */
-.slide-piece-summary .piece-counter {
+.section-piece-summary .piece-counter {
   font-size: 0.7rem;
   color: var(--rm-accent);
   text-transform: uppercase;
@@ -265,7 +265,7 @@ h4 { font-size: 0.8rem; color: var(--rm-muted); text-transform: uppercase; lette
 }
 
 /* Code */
-.slide-code .filename {
+.section-code .filename {
   font-size: 0.82rem;
   font-family: monospace;
   color: var(--rm-muted);
@@ -376,7 +376,7 @@ pre code.diff .hljs-deletion { color: var(--rm-red); }
 }
 
 /* UML diagram */
-.slide-uml .mermaid {
+.section-uml .mermaid {
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -384,7 +384,7 @@ pre code.diff .hljs-deletion { color: var(--rm-red); }
   padding: 0.5rem 0;
 }
 
-.slide-uml .mermaid svg {
+.section-uml .mermaid svg {
   max-width: 100%;
   height: auto !important;
   width: auto !important;
@@ -393,9 +393,9 @@ pre code.diff .hljs-deletion { color: var(--rm-red); }
 /* Risks list */
 .risks ul { font-size: 0.9rem; margin: 0; }
 
-/* Map slide (not rendered, but keep styles safe) */
-.slide-map .piece-map { font-size: 0.9rem; }
-.slide-map .piece-map li { margin-bottom: 0.4em; }
+/* Map section (not rendered, but keep styles safe) */
+.section-map .piece-map { font-size: 0.9rem; }
+.section-map .piece-map li { margin-bottom: 0.4em; }
 
 .piece-desc {
   color: var(--rm-muted);

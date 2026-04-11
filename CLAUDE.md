@@ -62,7 +62,7 @@ The tool is a pipeline: **fetch → analyze → generate → serve**. Each step'
 
 1. `src/github/pr.ts` — fetches PR metadata, file list, unified diff, and comments via Octokit
 2. `src/llm/analyze-overview.ts` → `analyze-structure.ts` → `analyze-detail.ts` — three sequential LLM calls that progressively decompose the PR
-3. `src/slides/builder.ts` — transforms analysis into a `SlideDeck` (groups of slides)
+3. `src/sections/builder.ts` — transforms analysis into a `Page` (groups of sections)
 4. `src/pipeline/generate.ts` — renders Handlebars templates to a static `index.html`
 5. `src/server/index.ts` — serves the site locally and opens the browser
 
@@ -79,17 +79,17 @@ Three passes, each building on the previous:
 
 All calls use Anthropic tool use (`tool_choice: { type: 'tool' }`) to get structured JSON output. Prompts live as plain markdown files in `src/llm/prompts/` with `{{variable}}` placeholders interpolated at runtime by `src/llm/load-prompt.ts`.
 
-### Slide structure
+### Page structure
 
 The output is a sidebar-based HTML page. The sidebar lists logical pieces; clicking a piece shows its detail panel with: summary → UML (optional) → signatures → walkthrough → code (one file per section) → issues (optional).
 
-Handlebars templates are in `src/slides/templates/`. The `deck.hbs` shell references partials by slide type, resolved at render time via a `slide_partial` helper.
+Handlebars templates are in `src/sections/templates/`. The `page.hbs` shell references partials by section type, resolved at render time via a `section_partial` helper.
 
 ### Cache invalidation order
 
 Cache keys are ordered in `src/cache/index.ts`. Invalidating a key removes it and all downstream keys:
 ```
-pr-metadata → pr-files → pr-diff → analysis-overview → analysis-structure → analysis-details → slides
+pr-metadata → pr-files → pr-diff → analysis-overview → analysis-structure → analysis-details → sections
 ```
 
 ### Static assets

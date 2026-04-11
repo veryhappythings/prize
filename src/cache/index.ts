@@ -9,7 +9,7 @@ export const CACHE_KEYS = [
   'analysis-overview',
   'analysis-structure',
   'analysis-details',
-  'slides',
+  'sections',
 ] as const
 
 export type CacheKey = (typeof CACHE_KEYS)[number]
