@@ -81,7 +81,7 @@ All calls use Anthropic tool use (`tool_choice: { type: 'tool' }`) to get struct
 
 ### Slide structure
 
-The output is a reveal.js slideshow with **horizontal navigation = pieces** and **vertical navigation = depth within a piece**. The vertical stack per piece is: summary → UML (optional) → signatures → walkthrough → code (one slide per file) → issues (optional).
+The output is a sidebar-based HTML page. The sidebar lists logical pieces; clicking a piece shows its detail panel with: summary → UML (optional) → signatures → walkthrough → code (one file per section) → issues (optional).
 
 Handlebars templates are in `src/slides/templates/`. The `deck.hbs` shell references partials by slide type, resolved at render time via a `slide_partial` helper.
 
@@ -94,4 +94,4 @@ pr-metadata → pr-files → pr-diff → analysis-overview → analysis-structur
 
 ### Static assets
 
-`static/` contains vendored reveal.js 5.2.1 (in `static/reveal/`) and mermaid 11 (`static/mermaid.min.js`). These are copied verbatim into the generated site directory — they are not npm dependencies.
+`static/` contains `monokai.css` (syntax highlight theme), `highlight.min.js`, `mermaid.min.js`, and `style.css`. These are copied verbatim into the generated site directory — they are not npm dependencies.
