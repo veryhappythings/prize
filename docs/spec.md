@@ -23,4 +23,4 @@ A tool for making human review of PRs easy. The goal is not to replace human rev
 - incorporate agent feedback into the slides
 
 ## Tech details
-- Cache findings step by step in ~/.pr-deck
+- Cache findings step by step in ~/.prize

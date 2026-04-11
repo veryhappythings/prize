@@ -7,7 +7,7 @@ import { run } from './pipeline/index.js'
 const program = new Command()
 
 program
-  .name('pr-deck')
+  .name('prize')
   .description('Augment and structure human PR reviews with LLM analysis')
   .version('0.1.0')
   .argument('<pr-url>', 'GitHub PR URL (e.g. https://github.com/owner/repo/pull/123)')
@@ -19,7 +19,7 @@ program
     try {
       const config = loadConfig()
       const ref = parsePRUrl(prUrl)
-      console.log(`\npr-deck — ${ref.owner}/${ref.repo}#${ref.number}\n`)
+      console.log(`\nprize — ${ref.owner}/${ref.repo}#${ref.number}\n`)
       await run(ref, config, {
         force: options.force,
         port: parseInt(options.port, 10),

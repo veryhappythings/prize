@@ -41,6 +41,6 @@ export function loadConfig(): Config {
     llmBaseUrl,
     llmModel,
     awsRegion,
-    cacheDir: join(homedir(), '.pr-deck'),
+    cacheDir: join(homedir(), '.prize'),
   }
 }

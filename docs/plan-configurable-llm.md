@@ -2,7 +2,7 @@
 
 ## Context
 
-Currently pr-deck requires an `ANTHROPIC_API_KEY` and hardcodes `claude-opus-4-6`. The user wants to optionally use any OpenAI-compatible API (OpenRouter, Ollama, LM Studio, Azure, etc.) so they aren't locked into a specific provider or billing method.
+Currently prize requires an `ANTHROPIC_API_KEY` and hardcodes `claude-opus-4-6`. The user wants to optionally use any OpenAI-compatible API (OpenRouter, Ollama, LM Studio, Azure, etc.) so they aren't locked into a specific provider or billing method.
 
 ## Approach
 

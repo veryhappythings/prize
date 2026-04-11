@@ -56,7 +56,7 @@ Uses the Python `pre-commit` framework (`.pre-commit-config.yaml`), not Husky. O
 
 ## Architecture
 
-The tool is a pipeline: **fetch → analyze → generate → serve**. Each step's output is cached in `~/.pr-deck/<owner>-<repo>-<pr_number>/` and skipped on re-runs if the PR `updated_at` hasn't changed.
+The tool is a pipeline: **fetch → analyze → generate → serve**. Each step's output is cached in `~/.prize/<owner>-<repo>-<pr_number>/` and skipped on re-runs if the PR `updated_at` hasn't changed.
 
 ### Pipeline flow (`src/pipeline/index.ts`)
 

@@ -1,10 +1,10 @@
 {
-  "name": "pr-deck",
+  "name": "prize",
   "version": "0.1.0",
   "description": "Augment and structure human PR reviews with LLM analysis",
   "type": "module",
   "bin": {
-    "pr-deck": "./dist/cli.js"
+    "prize": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsup && cp -r src/llm/prompts dist && mkdir -p dist/sections && cp -r src/sections/templates dist/sections/templates",

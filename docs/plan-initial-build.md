@@ -1,4 +1,4 @@
-# pr-deck — Implementation Plan
+# prize — Implementation Plan
 
 ## Context
 
@@ -74,7 +74,7 @@ test/
 - `yarn init`, install deps, configure TS/tsup
 - `src/cli.ts` — commander, single positional arg (PR URL)
 - `src/util/parse-url.ts` — extract owner/repo/number
-- `src/config.ts` — read env vars, define cache dir `~/.pr-deck`
+- `src/config.ts` — read env vars, define cache dir `~/.prize`
 - `src/util/logger.ts` — simple console logging
 
 ### Phase 2: GitHub Data Fetching
@@ -87,7 +87,7 @@ test/
 - Types in `src/github/types.ts`
 
 ### Phase 3: Caching Layer
-- Cache dir: `~/.pr-deck/<owner>-<repo>-<pr_number>/`
+- Cache dir: `~/.prize/<owner>-<repo>-<pr_number>/`
 - Ordered cache files: pr-metadata → pr-files → pr-diff → analysis-overview → analysis-structure → analysis-details → slides
 - Invalidation: compare PR `updated_at`; if changed, invalidate downstream
 - API: `cacheGet`, `cacheSet`, `cacheHas`, `cacheInvalidateFrom`
@@ -140,7 +140,7 @@ PR URL → parse-url → { owner, repo, number }
   → llm/analyze-structure → StructureAnalysis (pieces, order) [cached]
   → llm/analyze-detail → DetailAnalysis[] per piece [cached]
   → slides/builder → SlideDeck
-  → pipeline/generate → ~/.pr-deck/<id>/site/index.html
+  → pipeline/generate → ~/.prize/<id>/site/index.html
   → server → http://localhost:3000 → browser
 ```
 
@@ -153,7 +153,7 @@ PR URL → parse-url → { owner, repo, number }
 
 ## Verification
 1. `yarn tsx src/cli.ts https://github.com/<some-public-repo>/pull/<n>` — end to end
-2. Verify cache files appear in `~/.pr-deck/`
+2. Verify cache files appear in `~/.prize/`
 3. Verify browser opens with slideshow
 4. Re-run same PR — should skip LLM calls (cache hit)
 5. Run `yarn test` for unit tests
