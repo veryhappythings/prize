@@ -9,3 +9,6 @@ trim_trailing_whitespace = true
 [*.{ts,js,json,hbs,md,yaml,yml}]
 indent_style = space
 indent_size = 2
+
+[*.md]
+line_length = 100
