@@ -15,20 +15,20 @@ repos:
       - id: lint
         name: ESLint
         language: system
-        entry: yarn lint
+        entry: bun run lint
         pass_filenames: false
         types: [ts]
 
       - id: typecheck
         name: TypeScript type check
         language: system
-        entry: yarn tsc --noEmit
+        entry: bun run typecheck
         pass_filenames: false
         types: [ts]
 
       - id: tests
         name: Run tests
         language: system
-        entry: yarn test
+        entry: bun test
         pass_filenames: false
         types: [ts]

@@ -5,25 +5,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```sh
-yarn dev <pr-url>      # run the CLI without building (tsx)
-yarn build             # compile to dist/ with tsup
-yarn test              # run all tests
-yarn test --reporter=verbose  # run tests with output
-yarn test:watch        # run tests in watch mode
-yarn lint              # run ESLint on src/
+bun run dev <pr-url>   # run the CLI without building
+bun run build          # bundle to dist/prize (single file via bun build --target=bun)
+bun test               # run all tests
+bun test --verbose     # run tests with output
+bun test --watch       # run tests in watch mode
+bun run lint           # run ESLint on src/
+bun run typecheck      # run tsc --noEmit (via tsc in devDeps)
 ```
 
 To run a single test file:
 ```sh
-yarn vitest run test/cache.test.ts
+bun test test/cache.test.ts
 ```
 
-CLI flags accepted by `yarn dev`:
+CLI flags accepted by `bun run dev`:
 ```sh
-yarn dev <pr-url> --force    # bypass cache, re-run full pipeline
-yarn dev <pr-url> --port 3000
-yarn dev <pr-url> --no-server  # generate the site but do not serve it
-yarn dev <pr-url> --no-open    # serve but do not open the browser
+bun run dev <pr-url> --force    # bypass cache, re-run full pipeline
+bun run dev <pr-url> --port 3000
+bun run dev <pr-url> --no-server  # generate the site but do not serve it
+bun run dev <pr-url> --no-open    # serve but do not open the browser
 ```
 
 Required env vars before running:
@@ -52,7 +53,7 @@ export LLM_MODEL=us.anthropic.claude-sonnet-4-6-v1:0              # optional
 
 ## Pre-commit hooks
 
-Uses the Python `pre-commit` framework (`.pre-commit-config.yaml`), not Husky. On every commit it runs: trailing-whitespace/EOF fixes, YAML/JSON validation, `yarn lint`, `yarn tsc --noEmit`, and `yarn test`.
+Uses the Python `pre-commit` framework (`.pre-commit-config.yaml`), not Husky. On every commit it runs: trailing-whitespace/EOF fixes, YAML/JSON validation, `bun run lint`, `bun run typecheck`, and `bun test`.
 
 ## Architecture
 
@@ -94,4 +95,4 @@ pr-metadata → pr-files → pr-diff → analysis-overview → analysis-structur
 
 ### Static assets
 
-`static/` contains `monokai.css` (syntax highlight theme), `highlight.min.js`, `mermaid.min.js`, and `style.css`. These are copied verbatim into the generated site directory — they are not npm dependencies.
+`static/` contains `monokai.css` (syntax highlight theme), `highlight.min.js`, `mermaid.min.js`, and `style.css`. These are embedded into the binary at build time via `import ... with { type: 'text' }` and written to the output directory at runtime by `src/pipeline/generate.ts`.

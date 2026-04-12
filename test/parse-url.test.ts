@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect } from 'bun:test'
 import { parsePRUrl, prCacheKey } from '../src/util/parse-url.js'
 
 describe('parsePRUrl', () => {

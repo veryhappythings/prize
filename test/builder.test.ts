@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect } from 'bun:test'
 import { buildPage } from '../src/sections/builder.js'
 import type { PRData, PRMetadata, PRFile } from '../src/github/types.js'
 import type { AllAnalysis, OverviewAnalysis, StructureAnalysis, DetailAnalysis } from '../src/llm/types.js'

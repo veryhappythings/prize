@@ -4,14 +4,15 @@
   "description": "Augment and structure human PR reviews with LLM analysis",
   "type": "module",
   "bin": {
-    "prize": "./dist/cli.js"
+    "prize": "./dist/prize"
   },
   "scripts": {
-    "build": "tsup && cp -r src/llm/prompts dist && mkdir -p dist/sections && cp -r src/sections/templates dist/sections/templates",
-    "dev": "tsx src/cli.ts",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "lint": "eslint src"
+    "build": "rm -rf dist && bun build --target=bun --minify --sourcemap --outdir=dist src/cli.ts && mv dist/cli.js dist/prize",
+    "dev": "bun run src/cli.ts",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
@@ -23,13 +24,11 @@
     "openai": "^6.33.0"
   },
   "devDependencies": {
+    "@types/bun": "latest",
     "@types/handlebars": "^4.1.0",
     "@types/node": "^22.0.0",
     "eslint": "^10.2.0",
-    "tsup": "^8.4.0",
-    "tsx": "^4.19.3",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.58.0",
-    "vitest": "^3.1.1"
+    "typescript-eslint": "^8.58.0"
   }
 }

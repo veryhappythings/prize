@@ -15,9 +15,9 @@ understand the change. AI agents generally do not do this. We can help them.
 From source
 
 ```
-yarn install
-yarn build
-GITHUB_TOKEN=<token from github> ./dist/cli.js https://github.com/kubernetes/kubernetes/pull/138214
+bun install
+bun run build
+GITHUB_TOKEN=<token from github> ./dist/prize https://github.com/kubernetes/kubernetes/pull/138214
 ```
 
 You can configure your LLM provider with environment variables:

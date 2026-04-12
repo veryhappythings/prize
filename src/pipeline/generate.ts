@@ -1,29 +1,52 @@
 import Handlebars from 'handlebars'
-import { readFileSync, writeFileSync, mkdirSync, cpSync, existsSync } from 'node:fs'
-import { join, dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { writeFileSync, mkdirSync } from 'node:fs'
+import { join } from 'node:path'
 import type { Page } from '../sections/types.js'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
+// Templates — embedded at build time
+import pageTpl from '../sections/templates/page.hbs' with { type: 'text' }
+import titleTpl from '../sections/templates/title.hbs' with { type: 'text' }
+import overviewTpl from '../sections/templates/overview.hbs' with { type: 'text' }
+import mapTpl from '../sections/templates/map.hbs' with { type: 'text' }
+import pieceSummaryTpl from '../sections/templates/piece-summary.hbs' with { type: 'text' }
+import umlTpl from '../sections/templates/uml.hbs' with { type: 'text' }
+import signaturesTpl from '../sections/templates/signatures.hbs' with { type: 'text' }
+import walkthroughTpl from '../sections/templates/walkthrough.hbs' with { type: 'text' }
+import codeTpl from '../sections/templates/code.hbs' with { type: 'text' }
+import issuesTpl from '../sections/templates/issues.hbs' with { type: 'text' }
+import summaryTpl from '../sections/templates/summary.hbs' with { type: 'text' }
 
-/**
- * Find the project root by walking up until we find package.json.
- * Works in both dev mode (tsx src/...) and bundled mode (dist/cli.js).
- */
-function findProjectRoot(): string {
-  let dir = __dirname
-  while (true) {
-    if (existsSync(join(dir, 'package.json'))) return dir
-    const parent = dirname(dir)
-    if (parent === dir) throw new Error('Could not find project root (no package.json found)')
-    dir = parent
-  }
+// Static assets — embedded at build time
+import monokaiCss from '../../static/monokai.css' with { type: 'text' }
+import styleCss from '../../static/style.css' with { type: 'text' }
+import highlightJs from '../../static/highlight.min.js' with { type: 'text' }
+import mermaidJs from '../../static/mermaid.min.js' with { type: 'text' }
+
+const TEMPLATES: Record<string, string> = {
+  page: pageTpl,
+  title: titleTpl,
+  overview: overviewTpl,
+  map: mapTpl,
+  'piece-summary': pieceSummaryTpl,
+  uml: umlTpl,
+  signatures: signaturesTpl,
+  walkthrough: walkthroughTpl,
+  code: codeTpl,
+  issues: issuesTpl,
+  summary: summaryTpl,
 }
 
-const projectRoot = findProjectRoot()
+const STATIC_ASSETS: Record<string, string> = {
+  'monokai.css': monokaiCss,
+  'style.css': styleCss,
+  'highlight.min.js': highlightJs,
+  'mermaid.min.js': mermaidJs,
+}
 
 function loadTemplate(name: string): string {
-  return readFileSync(join(projectRoot, 'src/sections/templates', `${name}.hbs`), 'utf-8')
+  const tpl = TEMPLATES[name]
+  if (!tpl) throw new Error(`Template not found: ${name}.hbs`)
+  return tpl
 }
 
 function registerPartials() {
@@ -90,10 +113,9 @@ export async function generateSite(page: Page, outputDir: string): Promise<strin
   const indexPath = join(outputDir, 'index.html')
   writeFileSync(indexPath, html, 'utf-8')
 
-  // Copy static assets (mermaid, style.css, etc.)
-  const staticSrc = join(projectRoot, 'static')
-  if (existsSync(staticSrc)) {
-    cpSync(staticSrc, outputDir, { recursive: true })
+  // Write embedded static assets
+  for (const [name, content] of Object.entries(STATIC_ASSETS)) {
+    writeFileSync(join(outputDir, name), content, 'utf-8')
   }
 
   return indexPath
