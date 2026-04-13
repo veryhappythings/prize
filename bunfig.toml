@@ -1,2 +1,5 @@
+[install]
+minimumReleaseAge = 259200  # 3 days — don't install packages published less than 3 days ago
+
 [test]
 root = "./test"
