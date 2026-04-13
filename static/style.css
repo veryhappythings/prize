@@ -390,9 +390,6 @@ pre code.diff .hljs-deletion { color: var(--rm-red); }
   width: auto !important;
 }
 
-/* Risks list */
-.risks ul { font-size: 0.9rem; margin: 0; }
-
 /* Map section (not rendered, but keep styles safe) */
 .section-map .piece-map { font-size: 0.9rem; }
 .section-map .piece-map li { margin-bottom: 0.4em; }
