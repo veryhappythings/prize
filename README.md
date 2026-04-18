@@ -17,7 +17,7 @@ From source
 ```
 bun install
 bun run build
-GITHUB_TOKEN=<token from github> ./dist/prize https://github.com/kubernetes/kubernetes/pull/138214
+ANTHROPIC_API_KEY=<key> GITHUB_TOKEN=<token from github> ./dist/prize https://github.com/kubernetes/kubernetes/pull/138214
 ```
 
 You can configure your LLM provider with environment variables:
@@ -28,6 +28,11 @@ LLM_API_KEY or ANTHROPIC_API_KEY
 LLM_BASE_URL
 LLM_MODEL
 AWS_REGION (if using Bedrock)
+```
+
+Bedrock example:
+```
+AWS_REGION=eu-west-2 AWS_PROFILE=<profile> LLM_PROVIDER=bedrock LLM_MODEL=eu.anthropic.claude-opus-4-7 ./dist/prize https://github.com/kubernetes/kubernetes/pull/138214
 ```
 
 ## Limitations
