@@ -46,7 +46,8 @@ export async function analyzeOverview(
         },
         c4Context: {
           type: 'string',
-          description: 'C4 model context: which system/container/component is affected and how',
+          description:
+            'C4 model context as 2–3 short paragraphs separated by blank lines. Cover the System (what product/service), Containers (apps/services/databases involved), and Components (modules/classes) affected — one paragraph per level, skipping any level not relevant.',
         },
         affectedAreas: {
           type: 'array',

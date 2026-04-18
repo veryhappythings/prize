@@ -1,6 +1,7 @@
 export type SectionType =
   | 'title'
   | 'overview'
+  | 'c4-context'
   | 'map'
   | 'piece-summary'
   | 'uml'
@@ -24,12 +25,16 @@ export interface OverviewSection {
   type: 'overview'
   summary: string
   motivation: string
-  c4Context: string
   affectedAreas: string[]
   risks: string[]
   totalFiles: number
   additions: number
   deletions: number
+}
+
+export interface C4ContextSection {
+  type: 'c4-context'
+  context: string
 }
 
 export interface MapSection {
@@ -90,6 +95,7 @@ export interface SummarySection {
 export type Section =
   | TitleSection
   | OverviewSection
+  | C4ContextSection
   | MapSection
   | PieceSummarySection
   | UmlSection

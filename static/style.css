@@ -174,16 +174,26 @@ h4 { font-size: 0.8rem; color: var(--rm-muted); text-transform: uppercase; lette
   line-height: 1.6;
 }
 
-.overview-grid {
-  display: flex;
-  gap: 2rem;
+.overview-block {
+  font-size: 0.88rem;
+  line-height: 1.6;
   margin-bottom: 0.8rem;
 }
 
-.overview-block {
-  flex: 1;
-  font-size: 0.88rem;
+/* C4 Context */
+.section-c4-context h2 { margin-bottom: 0.6em; }
+
+.c4-context-body {
+  font-size: 0.9rem;
   line-height: 1.6;
+}
+
+.c4-context-body p {
+  margin: 0 0 0.9em 0;
+}
+
+.c4-context-body p:last-child {
+  margin-bottom: 0;
 }
 
 .tags { margin-bottom: 0; }

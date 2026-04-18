@@ -1,6 +1,6 @@
 <div class="section-overview">
   <h2>Overview</h2>
-  <p class="summary">{{{md section.summary}}}</p>
+  <div class="summary">{{{md section.summary}}}</div>
 
   <div class="stats-row">
     <div class="stat">
@@ -17,15 +17,9 @@
     </div>
   </div>
 
-  <div class="overview-grid">
-    <div class="overview-block">
-      <h4>Motivation</h4>
-      <p>{{{md section.motivation}}}</p>
-    </div>
-    <div class="overview-block">
-      <h4>C4 Context</h4>
-      <p>{{{md section.c4Context}}}</p>
-    </div>
+  <div class="overview-block">
+    <h4>Motivation</h4>
+    <div>{{{md section.motivation}}}</div>
   </div>
 
   {{#if section.affectedAreas.length}}

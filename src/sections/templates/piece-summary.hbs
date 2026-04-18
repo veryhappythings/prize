@@ -1,7 +1,7 @@
 <div class="section-piece-summary">
   <div class="piece-counter">{{section.pieceIndex}} / {{section.totalPieces}}</div>
   <h2>{{section.name}}</h2>
-  <p class="piece-description">{{{md section.description}}}</p>
+  <div class="piece-description">{{{md section.description}}}</div>
   <ul class="file-list">
     {{#each section.files}}<li>{{this}}</li>{{/each}}
   </ul>

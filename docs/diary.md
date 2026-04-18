@@ -186,3 +186,45 @@ Fewer tools, faster installs, faster tests. Bun handles everything that previous
 - 34 unit tests passing
 - TypeScript: clean
 - Full pipeline verified against cached kubernetes/kubernetes#138214
+
+## 2026-04-18 — Space out C4 context
+
+The C4 context paragraph in the overview section was rendering as one dense block.
+
+**`src/pipeline/generate.ts`**: `md` helper now converts runs of two or more newlines into `<br><br>`, so blank-line-separated paragraphs from the LLM render with vertical space inside the existing `<p>` wrapper.
+
+**`src/llm/analyze-overview.ts` + `src/llm/prompts/overview.md`**: tightened the `c4Context` description/prompt to ask for 2–3 short paragraphs separated by blank lines — one per relevant C4 level (System → Containers → Components), skipping any that don't apply.
+
+### Test results
+- 34 tests passing, lint + typecheck clean
+
+## 2026-04-18 — Break C4 context into its own section
+
+The previous patch spaced the C4 paragraph with `<br><br>`, but it still sat squeezed inside the half-width overview column next to Motivation. Promoted it to a top-level section so it gets full width and its own sidebar entry.
+
+- `src/sections/types.ts`: new `C4ContextSection` (`type: 'c4-context'`, `context: string`); removed `c4Context` from `OverviewSection`.
+- `src/sections/builder.ts`: drops `c4Context` from the overview group and appends a standalone `c4-context` group between overview and map. Skipped entirely if `overview.c4Context` is blank.
+- `src/sections/templates/overview.hbs`: removed the two-column grid; motivation is now a single full-width block.
+- `src/sections/templates/c4-context.hbs` (new): `<h2>C4 Context</h2>` + body rendered via a new `mdBlock` helper that splits on blank lines into real `<p>` blocks.
+- `src/pipeline/generate.ts`: registered the new template + partial, added `mdBlock` helper, added `'C4 Context'` sidebar label for the new section type.
+- `static/style.css`: dropped `.overview-grid`, made `.overview-block` full-width, added `.section-c4-context` / `.c4-context-body` rules so paragraphs get proper vertical spacing.
+- `test/builder.test.ts`: indices updated (pieces now start at `groups[4]`), added a c4-context carry-over test and a test for the blank-context omission.
+
+### Test results
+- 36 tests passing, lint + typecheck clean
+
+## 2026-04-18 — Unify `md` and `mdBlock` helpers
+
+The previous patch added an `mdBlock` helper for C4 context that duplicated 90% of the existing `md` helper's escape + inline transforms, differing only in how it joined paragraphs. Collapsed them into a single `md` helper whose output adapts to the input: one paragraph returns inline HTML (safe inside `<span>`, `<td>`, etc.), multiple paragraphs return one `<p>` per block.
+
+- `src/pipeline/generate.ts`: replaced both helpers with a single `md` that splits on blank lines, runs escape + inline once per paragraph, and only wraps in `<p>` when there's more than one. Deleted `mdBlock`.
+- Templates that wrapped `{{{md ...}}}` in a `<p class="...">` would nest `<p>` inside `<p>` if the content went multi-paragraph, so switched them to `<div class="...">`:
+  - `overview.hbs` (summary, motivation)
+  - `walkthrough.hbs` (walkthrough-text)
+  - `summary.hbs` (summary-text)
+  - `piece-summary.hbs` (piece-description)
+- `c4-context.hbs`: `{{{mdBlock ...}}}` → `{{{md ...}}}`.
+- `map.hbs`, `signatures.hbs`, `issues.hbs` unchanged — they host `md` in inline or block-accepting contexts that work either way.
+
+### Test results
+- 36 tests passing, lint + typecheck clean

@@ -7,6 +7,7 @@ import type { Page } from '../sections/types.js'
 import pageTpl from '../sections/templates/page.hbs' with { type: 'text' }
 import titleTpl from '../sections/templates/title.hbs' with { type: 'text' }
 import overviewTpl from '../sections/templates/overview.hbs' with { type: 'text' }
+import c4ContextTpl from '../sections/templates/c4-context.hbs' with { type: 'text' }
 import mapTpl from '../sections/templates/map.hbs' with { type: 'text' }
 import pieceSummaryTpl from '../sections/templates/piece-summary.hbs' with { type: 'text' }
 import umlTpl from '../sections/templates/uml.hbs' with { type: 'text' }
@@ -26,6 +27,7 @@ const TEMPLATES: Record<string, string> = {
   page: pageTpl,
   title: titleTpl,
   overview: overviewTpl,
+  'c4-context': c4ContextTpl,
   map: mapTpl,
   'piece-summary': pieceSummaryTpl,
   uml: umlTpl,
@@ -53,6 +55,7 @@ function registerPartials() {
   const sectionTypes = [
     'title',
     'overview',
+    'c4-context',
     'map',
     'piece-summary',
     'uml',
@@ -71,18 +74,27 @@ function registerHelpers() {
   // Allows {{> (section_partial type) section=this}} dynamic partial lookup
   Handlebars.registerHelper('section_partial', (type: string) => type)
 
-  // Renders inline markdown (bold, italic, backtick code) as HTML.
-  // Input is HTML-escaped first to prevent injection.
+  // Renders markdown (bold, italic, backtick code) as HTML. Input is
+  // HTML-escaped first. Single-paragraph input returns inline HTML with no
+  // wrapper (safe inside <span>, <td>, etc.); multi-paragraph input (blank
+  // lines) returns one <p> block per paragraph. Single newlines become <br>.
   Handlebars.registerHelper('md', (text: string) => {
     if (!text) return ''
-    const escaped = String(text)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-    const html = escaped
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      .replace(/`([^`]+)`/g, '<code>$1</code>')
+    const escape = (s: string) =>
+      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    const inline = (s: string) =>
+      s
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+    const paragraphs = String(text)
+      .split(/\n{2,}/)
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .map((p) => inline(escape(p)).replace(/\n/g, '<br>'))
+    const html = paragraphs.length <= 1
+      ? paragraphs[0] ?? ''
+      : paragraphs.map((p) => `<p>${p}</p>`).join('')
     return new Handlebars.SafeString(html)
   })
 
@@ -94,6 +106,7 @@ function registerHelpers() {
     switch (section.type) {
       case 'title': return section.prTitle as string
       case 'overview': return 'Overview'
+      case 'c4-context': return 'C4 Context'
       case 'piece-summary': return section.name as string
       case 'summary': return 'Summary'
       default: return String(section.type)

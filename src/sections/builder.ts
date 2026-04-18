@@ -32,7 +32,6 @@ export function buildPage(prData: PRData, analysis: AllAnalysis): Page {
       type: 'overview',
       summary: overview.summary,
       motivation: overview.motivation,
-      c4Context: overview.c4Context,
       affectedAreas: overview.affectedAreas,
       risks: overview.risks,
       totalFiles: metadata.changedFiles,
@@ -42,7 +41,18 @@ export function buildPage(prData: PRData, analysis: AllAnalysis): Page {
     sub: [],
   })
 
-  // 3. Map section — table of contents
+  // 3. C4 context section (standalone)
+  if (overview.c4Context?.trim()) {
+    groups.push({
+      main: {
+        type: 'c4-context',
+        context: overview.c4Context,
+      },
+      sub: [],
+    })
+  }
+
+  // 4. Map section — table of contents
   const orderedPieces = structure.reviewOrder
     .map((id) => structure.pieces.find((p) => p.id === id))
     .filter((p): p is NonNullable<typeof p> => p !== undefined)
