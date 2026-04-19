@@ -12,6 +12,10 @@ understand the change. AI agents generally do not do this. We can help them.
 
 [![Prize screenshot](docs/thumbnail.png)](docs/screenshot.png)
 
+## Examples
+
+- [Kops](https://www.veryhappythings.co.uk/prize/examples/kops.html)
+- [Kubernetes](https://www.veryhappythings.co.uk/prize/examples/kubernetes.html)
 ## Usage
 
 ```
