@@ -10,9 +10,52 @@ The narrative of a pull request is important. Some people I've worked with are m
 stories with their diffs, explaining the change commit by commit in a way that helps the reviwer
 understand the change. AI agents generally do not do this. We can help them.
 
+[![Prize screenshot](docs/thumbnail.png)](docs/screenshot.png)
+
 ## Usage
 
-From source
+```
+npx @veryhappythings/prize <pr-url>
+```
+
+Or install globally:
+
+```
+npm install -g @veryhappythings/prize
+prize <pr-url>
+```
+
+Requires [Bun](https://bun.sh) to be installed.
+
+Example:
+
+```
+ANTHROPIC_API_KEY=<key> GITHUB_TOKEN=<token> npx @veryhappythings/prize https://github.com/kubernetes/kops/pull/18204
+
+prize — kubernetes/kops#18204
+
+✓ Fetched PR: azure: Add Workload Identity support
+✓ Overview analysis complete
+✓ Found 8 logical pieces
+  Analyzing 8 pieces...
+    [1/8] Analyzed: vendor-dependency
+    [2/8] Analyzed: api-types-and-conversion
+    [3/8] Analyzed: azure-tasks
+    [4/8] Analyzed: issuer-discovery
+    [5/8] Analyzed: workload-identity-model-builder
+    [6/8] Analyzed: azure-blob-vfs
+    [7/8] Analyzed: integration-test
+    [8/8] Analyzed: addon-templates
+✓ Detail analysis complete
+✓ Generated: /Users/mac/.prize/kubernetes-kops-18204/site/index.html
+
+Serving at http://localhost:3000
+Press Ctrl+C to stop.
+
+
+```
+
+From source:
 
 ```
 bun install
