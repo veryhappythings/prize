@@ -1,5 +1,5 @@
 {
-  "name": "prize",
+  "name": "@veryhappythings/prize",
   "version": "0.1.0",
   "description": "Augment and structure human PR reviews with LLM analysis",
   "type": "module",
@@ -9,6 +9,9 @@
   },
   "homepage": "https://github.com/veryhappythings/prize",
   "author": "Mac Chapman",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/veryhappythings/prize.git"
