@@ -39,12 +39,17 @@ const TEMPLATES: Record<string, string> = {
   summary: summaryTpl,
 }
 
-const STATIC_ASSETS: Record<string, string> = {
-  'monokai.css': monokaiCss,
-  'style.css': styleCss,
-  'highlight.min.js': highlightJs,
-  'mermaid.min.js': mermaidJs,
+function minifyCss(css: string): string {
+  return css
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([{}:;,>+~])\s*/g, '$1')
+    .replace(/;}/g, '}')
+    .trim()
 }
+
+const monokaiCssMin = minifyCss(monokaiCss)
+const styleCssMin = minifyCss(styleCss)
 
 function loadTemplate(name: string): string {
   const tpl = TEMPLATES[name]
@@ -150,14 +155,9 @@ export async function generateSite(page: Page, outputDir: string): Promise<strin
 
   // Render main HTML
   const pageTemplate = Handlebars.compile(loadTemplate('page'))
-  const html = pageTemplate(page)
+  const html = pageTemplate({ ...page, monokaiCss: monokaiCssMin, styleCss: styleCssMin, highlightJs, mermaidJs })
   const indexPath = join(outputDir, 'index.html')
   writeFileSync(indexPath, html, 'utf-8')
-
-  // Write embedded static assets
-  for (const [name, content] of Object.entries(STATIC_ASSETS)) {
-    writeFileSync(join(outputDir, name), content, 'utf-8')
-  }
 
   return indexPath
 }

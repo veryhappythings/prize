@@ -3,6 +3,16 @@
   "version": "0.1.0",
   "description": "Augment and structure human PR reviews with LLM analysis",
   "type": "module",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/veryhappythings/prize/issues"
+  },
+  "homepage": "https://github.com/veryhappythings/prize",
+  "author": "Mac Chapman",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/veryhappythings/prize.git"
+  },
   "bin": {
     "prize": "./dist/prize"
   },

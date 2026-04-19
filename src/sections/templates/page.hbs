@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{prTitle}} — prize</title>
-  <link rel="stylesheet" href="monokai.css">
-  <link rel="stylesheet" href="style.css">
+  <style>{{{monokaiCss}}}</style>
+  <style>{{{styleCss}}}</style>
 </head>
 <body>
   <nav class="sidebar">
@@ -38,8 +38,8 @@
     {{/each}}
   </main>
 
-  <script src="highlight.min.js"></script>
-  <script src="mermaid.min.js"></script>
+  <script>{{{highlightJs}}}</script>
+  <script>{{{mermaidJs}}}</script>
   <script>
     // Syntax highlighting
     hljs.highlightAll();

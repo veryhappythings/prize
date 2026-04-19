@@ -1,5 +1,9 @@
 # Implementation Diary
 
+## 2026-04-19 — Single-file HTML output
+
+Switched `generateSite()` to produce a single self-contained `index.html` instead of `index.html` + four sibling asset files. All CSS and JS is now inlined — the file can be opened via `file://` or shared without a server. CSS (`style.css`, `monokai.css`) is minified at module load via a small regex pass before inlining; JS libs were already minified upstream. Output is ~3.3 MB, dominated by `mermaid.min.js`.
+
 ## 2026-04-05 — Phase 1: Scaffolding
 
 Starting from zero. Repo has only `docs/spec.md`.
