@@ -140,6 +140,20 @@ describe('buildPage', () => {
       const page = buildPage(makePRData({ metadata: { title: 'My PR' } }), makeAnalysis())
       expect(page.prTitle).toBe('My PR')
     })
+
+    it('sets prUrl from metadata.htmlUrl', () => {
+      const page = buildPage(
+        makePRData({ metadata: { htmlUrl: 'https://github.com/o/r/pull/7' } }),
+        makeAnalysis(),
+      )
+      expect(page.prUrl).toBe('https://github.com/o/r/pull/7')
+    })
+
+    it('sets prFiles to the current filenames of all PR files', () => {
+      const files = [makeFile('src/a.ts'), makeFile('src/b.ts'), makeFile('README.md')]
+      const page = buildPage(makePRData({ files }), makeAnalysis())
+      expect(page.prFiles).toEqual(['src/a.ts', 'src/b.ts', 'README.md'])
+    })
   })
 
   describe('title section', () => {

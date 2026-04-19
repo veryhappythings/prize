@@ -228,3 +228,30 @@ The previous patch added an `mdBlock` helper for C4 context that duplicated 90% 
 
 ### Test results
 - 36 tests passing, lint + typecheck clean
+
+## 2026-04-19 — Link file references to GitHub PR diff anchors
+
+Every file reference in the generated page (piece file lists, signatures table, code diff headings, and backticked paths in LLM prose) was plain text. Added linking so each reference opens the file's diff in the PR "Files changed" tab.
+
+GitHub's per-file anchor is `#diff-<sha256(filename)>` computed client-side — the API does not return it.
+
+### What was built
+
+- `src/util/pr-links.ts` (new): `fileAnchor(filename)` → `diff-<hex>` and `fileLink(prUrl, filename)` → full URL. Uses `node:crypto` `createHash('sha256').update(filename, 'utf8')`.
+- `src/sections/types.ts`: added `prUrl: string` and `prFiles: string[]` to the `Page` interface.
+- `src/sections/builder.ts`: populates `prUrl` from `metadata.htmlUrl` and `prFiles` from the file list.
+- `src/pipeline/generate.ts`:
+  - `registerHelpers` is now exported and takes a `Page` argument; builds a `Set<string>` of PR filenames once per render via closure.
+  - New `file_link` Handlebars helper: renders a filename as `<a class="file-ref" href="..." target="_blank" rel="noreferrer">`.
+  - `md` helper extended: backtick content is looked up in the PR filename set (after stripping trailing `:N` / `#LN` line references); matches are wrapped in `<a>` around the `<code>` tag.
+- `src/sections/templates/piece-summary.hbs`, `signatures.hbs`, `code.hbs`: switched `{{...}}` to `{{{file_link ...}}}`.
+- Prose templates (`walkthrough`, `issues`, `map`, `overview`, `c4-context`, `summary`) unchanged — they already go through `{{{md ...}}}`.
+
+### Tests
+
+- `test/pr-links.test.ts` (new): hash correctness with reference implementation, round-trip, case sensitivity, space-in-filename (catches accidental `encodeURIComponent`).
+- `test/builder.test.ts`: added assertions for `prUrl` and `prFiles` on the returned `Page`.
+- `test/generate-links.test.ts` (new): `file_link` helper, all three structured templates, `md` prose autolinking (match, non-match, `:N` stripping, `#LN` stripping, empty prUrl degradation).
+
+### Test results
+- 57 tests passing, lint + typecheck clean

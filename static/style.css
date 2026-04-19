@@ -400,6 +400,20 @@ pre code.diff .hljs-deletion { color: var(--rm-red); }
   width: auto !important;
 }
 
+/* File reference links */
+a.file-ref {
+  color: #7dcfff;
+  text-decoration: none;
+}
+
+a.file-ref:visited {
+  color: #bb9af7;
+}
+
+a.file-ref:hover {
+  text-decoration: underline;
+}
+
 /* Map section (not rendered, but keep styles safe) */
 .section-map .piece-map { font-size: 0.9rem; }
 .section-map .piece-map li { margin-bottom: 0.4em; }

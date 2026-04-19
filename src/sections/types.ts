@@ -116,5 +116,7 @@ export interface SectionGroup {
 
 export interface Page {
   prTitle: string
+  prUrl: string
+  prFiles: string[]
   groups: SectionGroup[]
 }

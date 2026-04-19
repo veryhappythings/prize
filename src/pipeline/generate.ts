@@ -2,6 +2,7 @@ import Handlebars from 'handlebars'
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import type { Page } from '../sections/types.js'
+import { fileLink } from '../util/pr-links.js'
 
 // Templates — embedded at build time
 import pageTpl from '../sections/templates/page.hbs' with { type: 'text' }
@@ -70,23 +71,50 @@ function registerPartials() {
   }
 }
 
-function registerHelpers() {
+export function registerHelpers(page: Page) {
+  const prFileSet = new Set(page.prFiles)
+  const escape = (s: string) =>
+    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  const linkFor = (f: string) => (page.prUrl ? fileLink(page.prUrl, f) : null)
+
   // Allows {{> (section_partial type) section=this}} dynamic partial lookup
   Handlebars.registerHelper('section_partial', (type: string) => type)
+
+  // Renders a filename as an <a> linking to its diff anchor in the PR.
+  // Falls back to plain escaped text when prUrl is absent.
+  Handlebars.registerHelper('file_link', (filename: string) => {
+    if (!filename) return ''
+    const safeName = escape(filename)
+    const url = linkFor(filename)
+    if (!url) return new Handlebars.SafeString(safeName)
+    return new Handlebars.SafeString(
+      `<a class="file-ref" href="${escape(url)}" target="_blank" rel="noreferrer">${safeName}</a>`,
+    )
+  })
 
   // Renders markdown (bold, italic, backtick code) as HTML. Input is
   // HTML-escaped first. Single-paragraph input returns inline HTML with no
   // wrapper (safe inside <span>, <td>, etc.); multi-paragraph input (blank
   // lines) returns one <p> block per paragraph. Single newlines become <br>.
+  // Backticked text that exactly matches a PR filename is linked to its diff.
   Handlebars.registerHelper('md', (text: string) => {
     if (!text) return ''
-    const escape = (s: string) =>
-      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    const codeReplace = (_: string, inner: string) => {
+      // inner is already HTML-escaped; unescape entities before filename lookup
+      const raw = inner.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+      // strip trailing line/anchor refs like ":42" or "#L10" before lookup
+      const key = raw.replace(/(?::\d+|#L\d+)$/, '')
+      const url = prFileSet.has(key) ? linkFor(key) : null
+      if (url) {
+        return `<a class="file-ref" href="${escape(url)}" target="_blank" rel="noreferrer"><code>${inner}</code></a>`
+      }
+      return `<code>${inner}</code>`
+    }
     const inline = (s: string) =>
       s
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.+?)\*/g, '<em>$1</em>')
-        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/`([^`]+)`/g, codeReplace)
     const paragraphs = String(text)
       .split(/\n{2,}/)
       .map((p) => p.trim())
@@ -118,7 +146,7 @@ export async function generateSite(page: Page, outputDir: string): Promise<strin
   mkdirSync(outputDir, { recursive: true })
 
   registerPartials()
-  registerHelpers()
+  registerHelpers(page)
 
   // Render main HTML
   const pageTemplate = Handlebars.compile(loadTemplate('page'))

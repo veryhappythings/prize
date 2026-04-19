@@ -3,6 +3,6 @@
   <h2>{{section.name}}</h2>
   <div class="piece-description">{{{md section.description}}}</div>
   <ul class="file-list">
-    {{#each section.files}}<li>{{this}}</li>{{/each}}
+    {{#each section.files}}<li>{{{file_link this}}}</li>{{/each}}
   </ul>
 </div>

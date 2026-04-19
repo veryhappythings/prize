@@ -1,6 +1,5 @@
 # Future Feature Ideas
 
-- links out to all changed files
 - Other linters/static analysis tools?
 - Useful C4 diagram
 - Syntax highlighting for diffs

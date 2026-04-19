@@ -130,5 +130,10 @@ export function buildPage(prData: PRData, analysis: AllAnalysis): Page {
     sub: [],
   })
 
-  return { prTitle: metadata.title, groups }
+  return {
+    prTitle: metadata.title,
+    prUrl: metadata.htmlUrl,
+    prFiles: files.map((f) => f.filename),
+    groups,
+  }
 }
