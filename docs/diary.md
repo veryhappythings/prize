@@ -259,3 +259,23 @@ GitHub's per-file anchor is `#diff-<sha256(filename)>` computed client-side — 
 
 ### Test results
 - 57 tests passing, lint + typecheck clean
+
+## 2026-05-16 — Fallback for large PRs that exceed GitHub's diff API limit
+
+GitHub's `.diff` media type endpoint returns 406/422 for PRs that are too large (typically >3000 changed files or very large total diff size). Previously this caused the entire pipeline to abort.
+
+### What changed
+
+- `src/github/pr.ts`:
+  - Added `reconstructDiffFromFiles(files: PRFile[]): string` — assembles a unified-diff-style string from the `patch` fields already returned by `listFiles`. Files that GitHub itself omits the patch for (oversized) get a `[patch omitted by GitHub API — file too large]` placeholder, matching the convention `analyze-detail.ts` already used.
+  - Modified `fetchPRDiff` to accept a `fallbackFiles: PRFile[]` parameter. On any error from the `.diff` endpoint it logs a warning to stderr and returns `reconstructDiffFromFiles(fallbackFiles)` instead of throwing.
+  - Modified `fetchPRData` to run `fetchPRMetadata`, `fetchPRFiles`, and `fetchPRComments` in parallel first, then call `fetchPRDiff` with the fetched files available as fallback. The small loss of parallelism is acceptable because the files fetch is fast and the diff endpoint either succeeds quickly or fails immediately for large PRs.
+
+- `test/github-pr.test.ts` (new): 5 tests covering `reconstructDiffFromFiles` (with/without patches, multiple files) and `fetchPRDiff` (success path, 406 fallback path).
+
+### Design notes
+
+Only `analyze-structure.ts` consumes the unified diff (and already truncates it to 80,000 chars). `analyze-overview.ts` doesn't use the diff at all; `analyze-detail.ts` reads per-file patches from `PRFile[]` directly. So reconstructing the diff from patches is equivalent for all downstream consumers.
+
+### Test results
+- 62 tests passing, lint + typecheck clean

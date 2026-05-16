@@ -1,5 +1,6 @@
 import OpenAI from 'openai'
 import type { LLMClient } from '../interface.js'
+import { withRateLimit } from '../retry.js'
 
 interface FunctionToolCall {
   id: string
@@ -25,7 +26,7 @@ export class OpenAILLMClient implements LLMClient {
     toolDescription: string,
     inputSchema: Record<string, unknown>
   ): Promise<T> {
-    const response = await this.client.chat.completions.create({
+    const response = await withRateLimit(() => this.client.chat.completions.create({
       model: this.model,
       max_tokens: 8096,
       messages: [
@@ -43,7 +44,7 @@ export class OpenAILLMClient implements LLMClient {
         },
       ],
       tool_choice: { type: 'function', function: { name: toolName } },
-    })
+    }))
 
     const message = response.choices[0]?.message
     const toolCall = message?.tool_calls?.find(

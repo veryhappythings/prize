@@ -49,19 +49,39 @@ export async function fetchPRFiles(
   }))
 }
 
+export function reconstructDiffFromFiles(files: PRFile[]): string {
+  return files
+    .map((f) => {
+      const header = `diff --git a/${f.filename} b/${f.filename}`
+      if (!f.patch) {
+        return `${header}\n[patch omitted by GitHub API — file too large]`
+      }
+      return `${header}\n${f.patch}`
+    })
+    .join('\n\n')
+}
+
 export async function fetchPRDiff(
   octokit: Octokit,
   owner: string,
   repo: string,
-  number: number
+  number: number,
+  fallbackFiles: PRFile[]
 ): Promise<string> {
-  const response = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}', {
-    owner,
-    repo,
-    pull_number: number,
-    headers: { accept: 'application/vnd.github.v3.diff' },
-  })
-  return response.data as unknown as string
+  try {
+    const response = await octokit.request('GET /repos/{owner}/{repo}/pulls/{pull_number}', {
+      owner,
+      repo,
+      pull_number: number,
+      headers: { accept: 'application/vnd.github.v3.diff' },
+    })
+    return response.data as unknown as string
+  } catch {
+    process.stderr.write(
+      '[prize] warning: .diff endpoint failed for this PR (likely too large) — falling back to reconstructed diff from per-file patches\n'
+    )
+    return reconstructDiffFromFiles(fallbackFiles)
+  }
 }
 
 export async function fetchPRComments(
@@ -111,11 +131,11 @@ export async function fetchPRData(
   repo: string,
   number: number
 ): Promise<PRData> {
-  const [metadata, files, diff, comments] = await Promise.all([
+  const [metadata, files, comments] = await Promise.all([
     fetchPRMetadata(octokit, owner, repo, number),
     fetchPRFiles(octokit, owner, repo, number),
-    fetchPRDiff(octokit, owner, repo, number),
     fetchPRComments(octokit, owner, repo, number),
   ])
+  const diff = await fetchPRDiff(octokit, owner, repo, number, files)
   return { metadata, files, diff, comments }
 }

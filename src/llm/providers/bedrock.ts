@@ -4,6 +4,7 @@ import {
   type Tool,
 } from '@aws-sdk/client-bedrock-runtime'
 import type { LLMClient } from '../interface.js'
+import { withRateLimit } from '../retry.js'
 
 const DEFAULT_MODEL = 'us.anthropic.claude-sonnet-4-6-v1:0'
 
@@ -43,7 +44,7 @@ export class BedrockLLMClient implements LLMClient {
       inferenceConfig: { maxTokens: 8096 },
     })
 
-    const response = await this.client.send(command)
+    const response = await withRateLimit(() => this.client.send(command))
 
     const content = response.output?.message?.content ?? []
     for (const block of content) {

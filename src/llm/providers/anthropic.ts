@@ -1,5 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk'
 import type { LLMClient } from '../interface.js'
+import { withRateLimit } from '../retry.js'
 
 const DEFAULT_MODEL = 'claude-sonnet-4-6'
 
@@ -19,7 +20,7 @@ export class AnthropicLLMClient implements LLMClient {
     toolDescription: string,
     inputSchema: Record<string, unknown>
   ): Promise<T> {
-    const response = await this.client.messages.create({
+    const response = await withRateLimit(() => this.client.messages.create({
       model: this.model,
       max_tokens: 8096,
       system: systemPrompt,
@@ -32,7 +33,7 @@ export class AnthropicLLMClient implements LLMClient {
         },
       ],
       tool_choice: { type: 'tool', name: toolName },
-    })
+    }))
 
     for (const block of response.content) {
       if (block.type === 'tool_use' && block.name === toolName) {
