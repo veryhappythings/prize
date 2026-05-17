@@ -1,5 +1,6 @@
 import { Octokit } from '@octokit/rest'
 import type { PRMetadata, PRFile, PRComment, PRData } from './types.js'
+import { backfillMissingPatches } from './backfill.js'
 
 export async function fetchPRMetadata(
   octokit: Octokit,
@@ -15,6 +16,8 @@ export async function fetchPRMetadata(
     author: data.user?.login ?? 'unknown',
     headBranch: data.head.ref,
     baseBranch: data.base.ref,
+    headSha: data.head.sha,
+    baseSha: data.base.sha,
     labels: data.labels.map((l) => l.name ?? '').filter(Boolean),
     state: data.state,
     updatedAt: data.updated_at,
@@ -46,6 +49,7 @@ export async function fetchPRFiles(
     changes: f.changes,
     patch: f.patch,
     previousFilename: f.previous_filename,
+    sha: f.sha,
   }))
 }
 
@@ -136,6 +140,7 @@ export async function fetchPRData(
     fetchPRFiles(octokit, owner, repo, number),
     fetchPRComments(octokit, owner, repo, number),
   ])
+  await backfillMissingPatches(octokit, owner, repo, files, metadata.baseSha, metadata.headSha)
   const diff = await fetchPRDiff(octokit, owner, repo, number, files)
   return { metadata, files, diff, comments }
 }

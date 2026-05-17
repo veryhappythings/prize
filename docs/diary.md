@@ -1,5 +1,13 @@
 # Implementation Diary
 
+## 2026-05-17 — Backfill patches for large-file diffs
+
+GitHub's `listFiles` endpoint omits `patch` for individual files whose diff exceeds an internal size threshold (~500 KB). Previously this caused code sections to silently vanish for those files, and the LLM received `(no patch available)` in their prompts.
+
+Fix: after fetching the file list, `backfillMissingPatches` (`src/github/backfill.ts`) fetches raw file content via the Contents API for each patch-less file and synthesises a unified diff using the `diff` package. Added/removed files are synthesised directly; modified files diff base and head content. Results are capped at 500 KB; binary files (by extension) and oversized or unreachable content get a placeholder. `src/sections/builder.ts` was also fixed to stop filtering out files with a null patch.
+
+Existing caches will need `--force` to pick up backfilled patches for any previously omitted files.
+
 ## 2026-04-19 — Single-file HTML output
 
 Switched `generateSite()` to produce a single self-contained `index.html` instead of `index.html` + four sibling asset files. All CSS and JS is now inlined — the file can be opened via `file://` or shared without a server. CSS (`style.css`, `monokai.css`) is minified at module load via a small regex pass before inlining; JS libs were already minified upstream. Output is ~3.3 MB, dominated by `mermaid.min.js`.

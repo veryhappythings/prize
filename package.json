@@ -39,12 +39,14 @@
     "@aws-sdk/client-bedrock-runtime": "^3.1024.0",
     "@octokit/rest": "^21.0.2",
     "commander": "^13.1.0",
+    "diff": "^9.0.0",
     "handlebars": "^4.7.8",
     "open": "^10.1.0",
     "openai": "^6.33.0"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/diff": "^8.0.0",
     "@types/handlebars": "^4.1.0",
     "@types/node": "^22.0.0",
     "eslint": "^10.2.0",

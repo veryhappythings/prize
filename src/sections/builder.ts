@@ -88,7 +88,7 @@ export function buildPage(prData: PRData, analysis: AllAnalysis): Page {
     // Code sections — one per file in the piece
     const pieceFileSet = new Set(piece.files)
     for (const f of files) {
-      if (pieceFileSet.has(f.filename) && f.patch) {
+      if (pieceFileSet.has(f.filename) && f.patch != null) {
         sub.push({
           type: 'code',
           pieceName: piece.name,

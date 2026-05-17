@@ -5,6 +5,8 @@ export interface PRMetadata {
   author: string
   headBranch: string
   baseBranch: string
+  headSha: string
+  baseSha: string
   labels: string[]
   state: string
   updatedAt: string
@@ -23,6 +25,7 @@ export interface PRFile {
   changes: number
   patch?: string
   previousFilename?: string
+  sha?: string
 }
 
 export interface PRComment {
