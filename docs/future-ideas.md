@@ -1,5 +1,8 @@
 # Future Feature Ideas
 
+- Fix issue where large PRs don't get diffs
+- For large PRs, Allow more than 10 pieces
+- Mermaid linter
 - Other linters/static analysis tools?
 - Useful C4 diagram
 - Syntax highlighting for diffs

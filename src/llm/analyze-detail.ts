@@ -3,6 +3,12 @@ import { loadPrompt } from './load-prompt.js'
 import type { PRFile } from '../github/types.js'
 import type { Piece, DetailAnalysis } from './types.js'
 
+function sanitizeMermaid(code: string | null): string | null {
+  if (!code) return code
+  // Replace literal \n sequences (LLM escape) with a space — they cause parse errors in node labels
+  return code.replace(/\\n/g, ' ')
+}
+
 function extractPieceDiff(files: PRFile[], pieceFiles: string[]): string {
   const pieceFileSet = new Set(pieceFiles)
   const relevant = files.filter((f) => pieceFileSet.has(f.filename))
@@ -22,7 +28,7 @@ export async function analyzeDetail(
 ): Promise<DetailAnalysis> {
   const pieceDiff = extractPieceDiff(files, piece.files)
   const umlInstruction = piece.suggestUml
-    ? `For the mermaidCode field: generate a ${piece.umlType} diagram showing ${piece.umlDescription}. Strict Mermaid syntax rules: (1) NEVER use \\n inside edge labels — keep edge labels to 1–4 plain words; (2) NEVER use parentheses () inside edge labels; (3) NEVER use apostrophes, colons, or emoji in labels — wrap any label containing special chars in double quotes; (4) Use simple alphanumeric node IDs (A, B, C1, etc.). Produce the minimal diagram that conveys the core flow.`
+    ? `For the mermaidCode field: generate a ${piece.umlType} diagram showing ${piece.umlDescription}. Strict Mermaid syntax rules: (1) NEVER use \\n (or any backslash escape) inside any label — node labels, edge labels, class members — use plain words only; (2) NEVER use parentheses () inside edge labels; (3) NEVER use apostrophes, colons, or emoji in labels — wrap any label containing special chars in double quotes; (4) Use simple alphanumeric node IDs (A, B, C1, etc.); (5) In erDiagram, PK/FK/UK are reserved key-type keywords — they must appear AFTER the attribute name (correct: \`string id PK\`, wrong: \`string PK\`). Do NOT use PK/FK/UK as the attribute name itself. Produce the minimal diagram that conveys the core flow.`
     : 'For the mermaidCode field: return null (no diagram needed for this piece).'
 
   const prompt = loadPrompt('detail', {
@@ -76,7 +82,7 @@ export async function analyzeDetail(
     }
   )
 
-  return { ...result, pieceId: piece.id }
+  return { ...result, pieceId: piece.id, mermaidCode: sanitizeMermaid(result.mermaidCode) }
 }
 
 export async function analyzeAllDetails(

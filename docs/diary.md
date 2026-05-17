@@ -260,6 +260,20 @@ GitHub's per-file anchor is `#diff-<sha256(filename)>` computed client-side — 
 ### Test results
 - 57 tests passing, lint + typecheck clean
 
+## 2026-05-16 — Fix Mermaid syntax errors from LLM-generated diagrams
+
+Two recurring issues found via the genomics-data-platform PR #3810:
+
+1. **Literal `\n` in node labels** — the LLM used `E[AWS SDK Kotlin\nS3 DynamoDB Batch]` with a backslash-n escape sequence. Mermaid's parser doesn't recognise this escape in node labels and throws a syntax error.
+2. **`PK`/`FK`/`UK` as attribute names in erDiagram** — Mermaid treats these as reserved key-type keywords, so `string PK "WORKFLOW#id"` is parsed as type=string, key=PK (no attribute name), which is a syntax error. The correct form is `string id PK`.
+
+### What changed
+
+- `src/llm/analyze-detail.ts`:
+  - Added `sanitizeMermaid()` — replaces all literal `\n` sequences (backslash + n) with a space before the code is cached or rendered.
+  - Extended `umlInstruction` with two new rules: no backslash escapes in any label; erDiagram PK/FK/UK placement.
+- `src/sections/templates/page.hbs`: Browser-side catch block now renders the raw Mermaid source in a red code block instead of silently hiding the element, making future failures visible.
+
 ## 2026-05-16 — Fallback for large PRs that exceed GitHub's diff API limit
 
 GitHub's `.diff` media type endpoint returns 406/422 for PRs that are too large (typically >3000 changed files or very large total diff size). Previously this caused the entire pipeline to abort.

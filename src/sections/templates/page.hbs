@@ -56,7 +56,7 @@
           el.innerHTML = svg;
         } catch (err) {
           console.warn('Mermaid render failed:', err);
-          el.style.display = 'none';
+          el.innerHTML = '<pre style="color:#e05c5c;font-size:0.8rem;white-space:pre-wrap">[Diagram syntax error — raw source below]\n' + code.replace(/</g, '&lt;') + '</pre>';
         }
       }
     });
