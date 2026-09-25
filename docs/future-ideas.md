@@ -3,7 +3,6 @@
 - For large PRs, Allow more than 10 pieces
 - Mermaid linter
 - Other linters/static analysis tools?
-- Useful C4 diagram
 - Syntax highlighting for diffs
 - Serve the result online somehow and attach it to the PR
 - Stop expecting jira tickets - allow any ticket source

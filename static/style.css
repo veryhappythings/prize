@@ -196,6 +196,55 @@ h4 { font-size: 0.8rem; color: var(--rm-muted); text-transform: uppercase; lette
   margin-bottom: 0;
 }
 
+.c4-diagram {
+  margin: 0 0 1.2rem 0;
+  padding: 1rem;
+  background: #16162a;
+  border: 1px solid #2a2a4a;
+  border-radius: 8px;
+}
+
+.c4-diagram-canvas {
+  overflow-x: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.c4-diagram-canvas svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.c4-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  justify-content: center;
+  margin-top: 0.8rem;
+  font-size: 0.75rem;
+  color: var(--rm-muted);
+}
+
+.c4-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.c4-swatch {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 3px;
+}
+
+.c4-swatch-person { background: #08427b; }
+.c4-swatch-system { background: #1168bd; }
+.c4-swatch-container { background: #438dd5; }
+.c4-swatch-component { background: #85bbf0; }
+.c4-swatch-external { background: #6b6b7b; }
+.c4-swatch-changed { border: 2px solid #f0c040; }
+
 .tags { margin-bottom: 0; }
 
 .tag {

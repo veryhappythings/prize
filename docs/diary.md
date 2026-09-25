@@ -316,3 +316,26 @@ Claude Opus 5.5 (`claude-opus-5-5`) rejects forced tool use (`tool_choice` of ty
 
 ### Test results
 - 69 tests passing, lint + typecheck clean
+
+## 2026-09-25 — C4 diagram in the C4 Context section
+
+The C4 Context section was prose only. Mermaid's C4 diagrams lay out badly and the LLM often gets the syntax wrong. So the LLM now returns a structured C4 model and we draw it ourselves. See `docs/plan-c4-diagram.md`.
+
+### What changed
+
+- `src/llm/types.ts`: new `C4Diagram` / `C4Element` / `C4Boundary` / `C4Relationship` types. `OverviewAnalysis.c4Diagram` is optional so older cached overviews still load.
+- `src/llm/analyze-overview.ts`, `prompts/overview.md`: `submit_overview` gains a `c4Diagram` property with elements (person, system, external system, container, database, component), nestable boundaries, relationships, and `changed` flags for what the PR touches. The result goes through `normalizeC4()` before it is cached.
+- `src/diagrams/c4.ts` (new):
+  - `normalizeC4()` drops dangling or duplicate relationships and self-loops, clears unknown or cyclic boundary refs, drops empty boundaries, and caps the diagram at 20 elements.
+  - `renderC4Svg()` lays out the model with elkjs (layered, top-down, orthogonal edges, `INCLUDE_CHILDREN` for boundaries) and draws a static SVG: C4 colours, person and cylinder shapes, dashed boundaries, and a yellow outline on changed elements and relationships.
+- `src/pipeline/generate.ts`: pre-renders diagrams before Handlebars runs, because helpers can't be async. If a layout fails, it logs a warning and keeps the prose.
+- `c4-context.hbs` and `style.css`: diagram panel with a legend above the prose.
+- New dependency: `elkjs`. The bundle grows from about 4.2 MB to 5.9 MB.
+
+### Bun quirk
+
+`elk.bundled.js` breaks under Bun because it sees the global `Worker`. `elk-worker.min.js` sees the global `self` and registers itself as a worker. `getElk()` hides `self` while requiring the worker, so the module exports its in-process `FakeWorker`. This works under `bun run` and in the `bun build` bundle.
+
+### Test results
+- 77 tests passing, lint + typecheck clean
+- `test/c4.test.ts` (new): normalisation edge cases, plus a full layout and render with nested boundaries

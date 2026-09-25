@@ -42,11 +42,13 @@ export function buildPage(prData: PRData, analysis: AllAnalysis): Page {
   })
 
   // 3. C4 context section (standalone)
-  if (overview.c4Context?.trim()) {
+  const c4Diagram = overview.c4Diagram ?? null
+  if (overview.c4Context?.trim() || c4Diagram) {
     groups.push({
       main: {
         type: 'c4-context',
-        context: overview.c4Context,
+        context: overview.c4Context ?? '',
+        diagram: c4Diagram,
       },
       sub: [],
     })

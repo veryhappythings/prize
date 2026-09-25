@@ -1,4 +1,19 @@
 <div class="section-c4-context">
   <h2>C4 Context</h2>
+  {{#if section.diagramSvg}}
+  <figure class="c4-diagram">
+    <div class="c4-diagram-canvas">{{{section.diagramSvg}}}</div>
+    <figcaption class="c4-legend">
+      <span class="c4-key"><i class="c4-swatch c4-swatch-person"></i>Person</span>
+      <span class="c4-key"><i class="c4-swatch c4-swatch-system"></i>System</span>
+      <span class="c4-key"><i class="c4-swatch c4-swatch-container"></i>Container</span>
+      <span class="c4-key"><i class="c4-swatch c4-swatch-component"></i>Component</span>
+      <span class="c4-key"><i class="c4-swatch c4-swatch-external"></i>External</span>
+      <span class="c4-key"><i class="c4-swatch c4-swatch-changed"></i>Changed in this PR</span>
+    </figcaption>
+  </figure>
+  {{/if}}
+  {{#if section.context}}
   <div class="c4-context-body">{{{md section.context}}}</div>
+  {{/if}}
 </div>

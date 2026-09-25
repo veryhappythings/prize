@@ -230,6 +230,21 @@ describe('buildPage', () => {
       const page = buildPage(makePRData(), makeAnalysis({ c4Context: 'System X\n\nContainer Y' }))
       expect(c4ContextSection(page)?.context).toBe('System X\n\nContainer Y')
     })
+
+    it('has a null diagram for overviews cached before diagrams existed', () => {
+      const page = buildPage(makePRData(), makeAnalysis())
+      expect(c4ContextSection(page)?.diagram).toBeNull()
+    })
+
+    it('carries the c4Diagram and keeps the group when the prose is blank', () => {
+      const c4Diagram = {
+        elements: [{ id: 'a', name: 'A', kind: 'system' as const, technology: null, description: '', boundary: null, changed: true }],
+        boundaries: [],
+        relationships: [],
+      }
+      const page = buildPage(makePRData(), makeAnalysis({ c4Context: '', c4Diagram }))
+      expect(c4ContextSection(page)?.diagram).toEqual(c4Diagram)
+    })
   })
 
   describe('summary section stats', () => {

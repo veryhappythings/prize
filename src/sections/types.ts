@@ -1,3 +1,5 @@
+import type { C4Diagram } from '../llm/types.js'
+
 export type SectionType =
   | 'title'
   | 'overview'
@@ -35,6 +37,9 @@ export interface OverviewSection {
 export interface C4ContextSection {
   type: 'c4-context'
   context: string
+  diagram: C4Diagram | null
+  /** Rendered from `diagram` at generate time */
+  diagramSvg?: string
 }
 
 export interface MapSection {

@@ -3,6 +3,8 @@ import { writeFileSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 import type { Page } from '../sections/types.js'
 import { fileLink } from '../util/pr-links.js'
+import { renderC4Svg } from '../diagrams/c4.js'
+import { logger } from '../util/logger.js'
 
 // Templates — embedded at build time
 import pageTpl from '../sections/templates/page.hbs' with { type: 'text' }
@@ -147,8 +149,27 @@ export function registerHelpers(page: Page) {
   })
 }
 
+/** Lays out C4 diagrams ahead of rendering, since Handlebars helpers are sync.
+ *  A failed layout drops the diagram and keeps the prose. */
+async function renderDiagrams(page: Page): Promise<Page> {
+  const groups = await Promise.all(
+    page.groups.map(async (group) => {
+      const main = group.main
+      if (main.type !== 'c4-context' || !main.diagram) return group
+      try {
+        return { ...group, main: { ...main, diagramSvg: await renderC4Svg(main.diagram) } }
+      } catch (err) {
+        logger.warn(`C4 diagram layout failed: ${err instanceof Error ? err.message : String(err)}`)
+        return group
+      }
+    }),
+  )
+  return { ...page, groups }
+}
+
 export async function generateSite(page: Page, outputDir: string): Promise<string> {
   mkdirSync(outputDir, { recursive: true })
+  page = await renderDiagrams(page)
 
   registerPartials()
   registerHelpers(page)
