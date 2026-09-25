@@ -73,7 +73,7 @@ You can configure your LLM provider with environment variables:
 LLM_PROVIDER = 'anthropic' | 'openai' | 'bedrock'
 LLM_API_KEY or ANTHROPIC_API_KEY
 LLM_BASE_URL
-LLM_MODEL
+LLM_MODEL (defaults to claude-opus-5-5 for anthropic, anthropic.claude-opus-5-5 for bedrock)
 AWS_REGION (if using Bedrock)
 ```
 

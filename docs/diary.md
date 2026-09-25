@@ -301,3 +301,18 @@ Only `analyze-structure.ts` consumes the unified diff (and already truncates it 
 
 ### Test results
 - 62 tests passing, lint + typecheck clean
+
+## 2026-09-25 — Support Claude Opus 5.5
+
+Claude Opus 5.5 (`claude-opus-5-5`) rejects forced tool use (`tool_choice` of type `tool`/`any` returns a 400) and always thinks (thinking tokens count toward `max_tokens`). Every LLM call in the pipeline relied on forced tool use, so the providers needed changes before the model could be used at all.
+
+### What changed
+
+- `src/llm/tool-call.ts` (new): `withToolInstruction()` adds an instruction to the user message telling the model to call the submit tool. `requireToolCall()` retries up to 3 times if the model answers without calling it.
+- `src/llm/providers/anthropic.ts`: the default model is now `claude-opus-5-5`. Calls use `tool_choice: auto`, set `output_config.effort: 'high'` (Opus 5.5 defaults to `medium`), and stream with `max_tokens: 64000` to leave room for thinking without hitting HTTP timeouts. A `refusal` stop reason is reported as an error.
+- `src/llm/providers/bedrock.ts`: the default model is now `anthropic.claude-opus-5-5`. `toolChoice` is dropped, so the call uses auto. `maxTokens` goes up to 32000.
+- `src/llm/providers/openai.ts`: `tool_choice: 'auto'` plus the same instruction and retry, so Opus 5.5 works through OpenAI-compatible gateways such as OpenRouter. `max_tokens` goes up to 16000.
+- `@anthropic-ai/sdk` goes from 0.39 to 0.127, which adds `output_config` types.
+
+### Test results
+- 69 tests passing, lint + typecheck clean

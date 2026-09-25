@@ -1,8 +1,9 @@
 import Anthropic from '@anthropic-ai/sdk'
 import type { LLMClient } from '../interface.js'
 import { withRateLimit } from '../retry.js'
+import { requireToolCall, withToolInstruction } from '../tool-call.js'
 
-const DEFAULT_MODEL = 'claude-sonnet-4-6'
+const DEFAULT_MODEL = 'claude-opus-5-5'
 
 export class AnthropicLLMClient implements LLMClient {
   private client: Anthropic
@@ -20,27 +21,35 @@ export class AnthropicLLMClient implements LLMClient {
     toolDescription: string,
     inputSchema: Record<string, unknown>
   ): Promise<T> {
-    const response = await withRateLimit(() => this.client.messages.create({
-      model: this.model,
-      max_tokens: 8096,
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userMessage }],
-      tools: [
-        {
-          name: toolName,
-          description: toolDescription,
-          input_schema: inputSchema as Anthropic.Tool['input_schema'],
-        },
-      ],
-      tool_choice: { type: 'tool', name: toolName },
-    }))
+    return requireToolCall(toolName, async () => {
+      // Thinking is always on for Opus 5.5 and counts toward max_tokens, so leave
+      // plenty of headroom and stream to avoid HTTP timeouts.
+      const response = await withRateLimit(() => this.client.messages.stream({
+        model: this.model,
+        max_tokens: 64000,
+        output_config: { effort: 'high' },
+        system: systemPrompt,
+        messages: [{ role: 'user', content: withToolInstruction(userMessage, toolName) }],
+        tools: [
+          {
+            name: toolName,
+            description: toolDescription,
+            input_schema: inputSchema as Anthropic.Tool['input_schema'],
+          },
+        ],
+        tool_choice: { type: 'auto' },
+      }).finalMessage())
 
-    for (const block of response.content) {
-      if (block.type === 'tool_use' && block.name === toolName) {
-        return block.input as T
+      if (response.stop_reason === 'refusal') {
+        throw new Error(`LLM declined the request (${response.stop_details?.category ?? 'unknown category'})`)
       }
-    }
 
-    throw new Error(`LLM did not call tool ${toolName}`)
+      for (const block of response.content) {
+        if (block.type === 'tool_use' && block.name === toolName) {
+          return block.input as T
+        }
+      }
+      return undefined
+    })
   }
 }

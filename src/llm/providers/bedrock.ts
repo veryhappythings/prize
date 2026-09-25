@@ -5,8 +5,9 @@ import {
 } from '@aws-sdk/client-bedrock-runtime'
 import type { LLMClient } from '../interface.js'
 import { withRateLimit } from '../retry.js'
+import { requireToolCall, withToolInstruction } from '../tool-call.js'
 
-const DEFAULT_MODEL = 'us.anthropic.claude-sonnet-4-6-v1:0'
+const DEFAULT_MODEL = 'anthropic.claude-opus-5-5'
 
 export class BedrockLLMClient implements LLMClient {
   private client: BedrockRuntimeClient
@@ -33,26 +34,26 @@ export class BedrockLLMClient implements LLMClient {
       },
     }
 
-    const command = new ConverseCommand({
-      modelId: this.model,
-      system: [{ text: systemPrompt }],
-      messages: [{ role: 'user', content: [{ text: userMessage }] }],
-      toolConfig: {
-        tools: [tool],
-        toolChoice: { tool: { name: toolName } },
-      },
-      inferenceConfig: { maxTokens: 8096 },
-    })
+    return requireToolCall(toolName, async () => {
+      // No toolChoice (i.e. auto): Opus 5.5 rejects forced tool use.
+      const command = new ConverseCommand({
+        modelId: this.model,
+        system: [{ text: systemPrompt }],
+        messages: [{ role: 'user', content: [{ text: withToolInstruction(userMessage, toolName) }] }],
+        toolConfig: { tools: [tool] },
+        // Thinking is always on for Opus 5.5 and counts toward maxTokens
+        inferenceConfig: { maxTokens: 32000 },
+      })
 
-    const response = await withRateLimit(() => this.client.send(command))
+      const response = await withRateLimit(() => this.client.send(command))
 
-    const content = response.output?.message?.content ?? []
-    for (const block of content) {
-      if (block.toolUse?.name === toolName) {
-        return block.toolUse.input as T
+      const content = response.output?.message?.content ?? []
+      for (const block of content) {
+        if (block.toolUse?.name === toolName) {
+          return block.toolUse.input as T
+        }
       }
-    }
-
-    throw new Error(`LLM did not call tool ${toolName}`)
+      return undefined
+    })
   }
 }
